@@ -1,1 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Map</title>
+
+        <style type="text/css">
+            /* Always set the map height explicitly to define the size of the div element that contains the map. */
+            #map {
+                height: 100%;
+            }
+
+            /* Optional: Makes the sample page fill the window. */
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+    </head>
+
+    <body>
+        <select id="stations" name="stations"></select>
+        <div id="map"></div>
+        
+        <script>
+            // currently the initMap function fetches data from a local json file (https://developer.jcdecaux.com/#/opendata/vls?page=static&contract=Dublin). 
+            // needs to be updated so that function uses database data passed from the python application
+            let map;
+            function initMap() {
+                fetch("dublin.json").then(response => {
+                    return response.json();
+                }).then(data => {
+                    console.log(data);
+                // map centered on Dublin
+                map = new google.maps.Map(document.getElementById("map"), {
+                    center: {lat: 53.3470, lng: -6.2603},
+                    zoom: 13.5,
+                });
+
+                data.forEach(station => {
+                    dropDownList = document.getElementById("stations");
+                    // populate select element with station options
+                    var stOp = document.createElement("option");
+                    stOp.setAttribute("value",station.number);
+                    stOp.setAttribute("label",station.name);
+                    dropDownList.appendChild(stOp); 
+                    
+                    // create unique marker for each station
+                    const marker = new google.maps.Marker({
+                        position: {lat: station.latitude, lng: station.longitude},
+                        map: map});
+                        // create an info window to display station information
+                        var infowindow = new google.maps.InfoWindow({
+                        content:station.name
+                        });
+                        google.maps.event.addListener(marker,"mouseover",function() {
+                            infowindow.open(map,marker);
+                        })
+                        google.maps.event.addListener(marker,"mouseout",function() {
+                            infowindow.close();
+                        })
+                        google.maps.event.addListener(marker,"click",function() {
+                            map.setZoom(15);
+                            map.setCenter(marker.getPosition());
+                        })
+                })
+            })}; 
+
+        </script>
+        
+        <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIjfPvdos15QUCS8h7xo-wHBao8qCGcwc&callback=initMap&libraries=&v=weekly" async></script>
+    </body>
+
+</html>
 
