@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" type="text/css" href="style.css">
+
+            <title>Dublin Bikes: {% block title %}{% endblock %}</title>
+    </head>
+
+    <body>
+        <header><h1>Dublin Bikes</h1></header>
+            <nav>
+                <a>Home</a>
+                <a>Statistics</a>
+                <a>Predictions</a>
+            </nav>
+        <footer><p>Copyright &copy; 2009-2021 Dublin Bikes</p></footer>
+
+        <main>
+            {% block main %}{% endblock %}
+        </main>
+
+    </body>
+
+</html>
