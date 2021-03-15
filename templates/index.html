@@ -1,12 +1,18 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>HOME</title>
+    {% extends "layout.html" %}
 
 {% block title %}
     Index
 {% endblock %}
-
+</head>
+<body>
 {% block main %}
   <p>Weather forecast</p>
-  <table border='1' style='border-collapse:collapse'>
+  <table border='1' style='border-collapse:collapse; margin-left:200px;'>
       <th>Cloud Cover</th>
       <th>Weather</th>
       <th>Condition</th>
@@ -30,4 +36,5 @@
         }, 1200 * 1000);
     </script> 
 {% endblock %} 
-
+</body>
+</html>
