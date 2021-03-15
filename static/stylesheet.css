@@ -1,61 +1,146 @@
+/* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+#map {
+  height: 300px;
+  width: 98%;
+  overflow: hidden;
+  position: absolute;
+  margin:181px 10px 0px 10px;
+  border: solid 2px;
+}
+
+/* Optional: Makes the sample page fill the window. */
+/*html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}*/
+
 *{
     margin: 0;
     padding: 0;
-}
-
-header{
-    background-color: #404040;
-    height: 80px;
-    color: white;
-    text-align: center;
-}
-
-header h1{
-    position: absolute;
-    margin: 20px 0px 0px 620px;
-}
-
-.Logo{
-    width: 180px;
-    height: 80px;
-    position: fixed;
-    margin: 0px;
-    
+/*    background-color: #282828;*/
 }
 
 nav{
-    background-color: #404040;
+    background-color: #282828;
     color: white;
-    width: 180px;
-    height: 100%;
+    /*width: 1130px;*/
+    width: 1272px;
+    height: 70px;
     position: fixed;
-    
+    overflow: hidden;
+    padding: 10px 0px;
+    margin-left: 150px;
 }
 
 nav a{
-    color: white;
-    display: block;
-    text-align: left;
-    padding: 15px 5px;
-    border-bottom: 2px solid white;
-    border-bottom-left-radius: 5px;
+    float: right;
+    text-align: center;
     text-decoration: none;
+    padding: 14px 50px;
+    color: white;
+    margin: 10px 0px 10px 0px;
 }
 
 nav a:hover{
-    color: #404040;
     background-color: white;
+    color: black;
     cursor: pointer;
-    border: 2px solid;
-    border-color: #404040;
+}
+
+/*.searchbox{
+    width: 100px;
+    background-color: white;
+}*/
+
+.Logo{
+    width: 150px;
+    /*height: 75px;*/
+    height: 86px;
+    position: fixed;
+    margin: 0px;
+    padding: 2px 0px 0px 0px;
+    opacity: 0.5;
+    border-bottom: solid 2px #282828;
 }
 
 footer{
-    background-color: #404040;
+    background-color: #282828;
     position: fixed;
     bottom: 0;
     width: 100%;
     color: white;
     margin-top: 20px;
     text-align: center;
+}
+
+#filter{
+    margin: 110px 0px 0px 1268px;
+    position: absolute;
+}
+
+#lblfilter1{
+    margin: 120px 0px 0px 1031px;
+    position: absolute;
+}
+
+#filter2{
+    margin: 110px 0px 0px 902px;
+    position: absolute;
+}
+
+#lblfilter2{
+    margin: 120px 0px 0px 684px;
+    position: absolute;
+}
+
+.toggle input{
+    display: none;
+}
+
+.toggle{
+    position: relative;
+    display: inline-block;
+    width: 110px;
+    height: 40px;
+    margin: 0 10px;
+}
+
+.slider{
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.switch input {display:none}
+
+.slider:before
+{
+    position: absolute;
+    content: "";
+    height: 30px;
+    width: 50px;
+    left: 5px;
+    bottom: 5px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50px;
+}
+
+input:checked + .slider
+{
+    background-color: #282828;
+}
+
+input:checked + .slider:before
+{
+    transform: translateX(50px);
 }
