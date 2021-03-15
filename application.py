@@ -5,7 +5,7 @@ from flask import Flask,render_template
 app = Flask(__name__)
 
 @app.route("/")
-def home():
+def index():
     
     try:
         f = open('weatherkey.txt')
@@ -37,11 +37,14 @@ def home():
                     
                 # Now print fetched result
             print ("cloud = %s ,condition_icon = %s,condition_text = %s ,precip_mm=%s,temp_c = %s,wind_kph=%s" % \
-                     (cloud,condition_icon,condition_text,precip_mm,temp_c,wind_kph))
+                   (cloud,condition_icon,condition_text,precip_mm,temp_c,wind_kph))
+            
+        return render_template("index.html",posts=posts)
+
     except:
         print("can't access database")
     
-    return render_template("home.html",posts=posts)
+        return render_template("index.html")
     
 if __name__ == "__main__":
     app.run(debug=True)
