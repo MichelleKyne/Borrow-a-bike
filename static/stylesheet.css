@@ -1,1 +1,61 @@
+*{
+    margin: 0;
+    padding: 0;
+}
 
+header{
+    background-color: #404040;
+    height: 80px;
+    color: white;
+    text-align: center;
+}
+
+header h1{
+    position: absolute;
+    margin: 20px 0px 0px 620px;
+}
+
+.Logo{
+    width: 180px;
+    height: 80px;
+    position: fixed;
+    margin: 0px;
+    
+}
+
+nav{
+    background-color: #404040;
+    color: white;
+    width: 180px;
+    height: 100%;
+    position: fixed;
+    
+}
+
+nav a{
+    color: white;
+    display: block;
+    text-align: left;
+    padding: 15px 5px;
+    border-bottom: 2px solid white;
+    border-bottom-left-radius: 5px;
+    text-decoration: none;
+}
+
+nav a:hover{
+    color: #404040;
+    background-color: white;
+    cursor: pointer;
+    border: 2px solid;
+    border-color: #404040;
+}
+
+footer{
+    background-color: #404040;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    color: white;
+    margin-top: 20px;
+    text-align: center;
+}
