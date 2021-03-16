@@ -1,13 +1,48 @@
 import pymysql
 from jinja2 import Template
-from flask import Flask, render_template
+from flask import Flask, jsonify, render_template
 import json
+from email.policy import default
 
 app = Flask(__name__)
 
-
 @app.route("/")
 def index():
+    f = open('dynamickey.txt')
+    line = f.readlines()
+    converted_list = []
+
+    for element in line:
+        converted_list.append(element.strip())
+
+    # initalising variables
+    host = converted_list[0]
+    db_name = converted_list[1]
+    user_name = converted_list[2]
+    password = converted_list[3]
+        
+    db = pymysql.connect(host=host, user=user_name, passwd=password, db=db_name, port=3306)
+    cursor = db.cursor()
+    cursor.execute("SELECT num,name,address,latitude,longitude,bike_stands,stands_free,bikes_free, MAX(last_update) AS most_recent FROM dublinbikes.dbikes GROUP BY num;")
+    row_headers = [x[0] for x in cursor.description]
+    data = cursor.fetchall()
+    # create an array to store the sql data
+    json_data = []
+    for result in data:
+        json_data.append(dict(zip(row_headers, result)))
+    # convert the array to json format (default=str ensures dates are serializable) and return it
+    return json.dumps(json_data,default=str)
+
+@app.route("/home")
+def home():
+    return render_template("index.html")
+
+@app.route("/map")
+def map():
+    return render_template("map.html")
+    
+@app.route("/weather")
+def weather():
     try:
         f = open('weatherkey.txt')
         line = f.readlines()
@@ -39,38 +74,12 @@ def index():
             print("cloud = %s ,condition_icon = %s,condition_text = %s ,precip_mm=%s,temp_c = %s,wind_kph=%s" % \
                   (cloud, condition_icon, condition_text, precip_mm, temp_c, wind_kph))
 
-        return render_template("index.html", posts=posts)
+        return render_template("weather.html", posts=posts)
 
     except:
         print("can't access database")
 
-        return render_template("index.html")
-
-
-@app.route("/stations")
-def stations():
-    # engine = create_engine("mysql+mysqlconnector://{}:{}@{}:{}/{}".format("Praneeth", "Praneeth@043", "dbbikes.cporu4f1xwew.us-east-1.rds.amazonaws.com", 3306, "dbikes"), echo=True)
-    link = "dbbikes.cporu4f1xwew.us-east-1.rds.amazonaws.com"
-    db = pymysql.connect(host="dbbikes.cporu4f1xwew.us-east-1.rds.amazonaws.com", port=int(3306), user="Praneeth",
-                         passwd="Praneeth043")
-    cursor = db.cursor()
-
-    # get all the columns in the station table and the available bikes, bike stands details from availability table
-    cursor.execute(
-        "select S.*,A.available_bikes, A.available_bike_stands from dbikes.station S join dbikes.availability A on S.id = A.id")
-
-    row_headers = [x[0] for x in cursor.description]
-    data = cursor.fetchall()
-    print([i for i in data])
-
-    # create an array to store the sql sata
-    json_data = []
-    for result in data:
-        json_data.append(dict(zip(row_headers, result)))
-
-    # convert the array to json format and return it
-    return json.dumps(json_data)
-
+        return render_template("weather.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
