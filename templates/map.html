@@ -86,12 +86,12 @@
                     });
 
     //                check if the variable is true and if the bike stands for any of the station is 0
-                    if(parking_slots_filter == true && station.available_bike_stands == 0){
+                    if(parking_slots_filter == true && station.stands_free == 0){
     //                    if any of the station is not having parking slots, then hide that station marker
                         marker.setVisible(false);
                     }
     //                check if available bikes variable is true and if any station with available bikes as 0-->
-                    if(bikes_available_filter == true && station.available_bikes == 0){
+                    if(bikes_available_filter == true && station.bikes_free == 0){
     //                    if any of the station is not having parking slots, then hide that station marker-->
                         marker.setVisible(false);
                     }
