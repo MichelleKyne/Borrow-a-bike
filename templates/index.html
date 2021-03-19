@@ -1,40 +1,8 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>HOME</title>
-    {% extends "layout.html" %}
+{% extends "layout.html" %}
 
 {% block title %}
-    Index
+    Home
 {% endblock %}
-</head>
-<body>
+
 {% block main %}
-  <p>Weather forecast</p>
-  <table border='1' style='border-collapse:collapse; margin-left:200px;'>
-      <th>Cloud Cover</th>
-      <th>Weather</th>
-      <th>Condition</th>
-      <th>Precipitation</th>
-      <th>Temperature</th>
-      <th>Wind Speed</th>
-      {% for post in posts %}
-      <tr>
-           <td>{{post[1]}}%</td>
-           <td><image src={{post[2]}} alt='weather icon'></td>
-           <td>{{post[3]}}</td>
-           <td>{{post[7]}}</td>
-           <td>{{post[8]}}</td>
-           <td>{{post[9]}}</td>
-        </tr>
-      {% endfor %}
-    </table>
-     <script type="text/javascript">
-        setTimeout(function () { 
-          location.reload();
-        }, 1200 * 1000);
-    </script> 
 {% endblock %} 
-</body>
-</html>
