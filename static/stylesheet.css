@@ -24,25 +24,23 @@ body {
 /*    background-color: #282828;*/
 }
 
-nav{
+header {
     background-color: #282828;
-    color: white;
     width: 100%;
     height: 86px;
-    position: fixed;
-    overflow: hidden;
-    position:relative;
+}
+
+nav{
+    float: right;
+    padding: 30px;
 }
 
 nav a{
-    float: right;
-    display: block;
-    text-align: center;
     text-decoration: none;
-    padding: 14px 50px;
     color: white;
-    margin: 10px 0px 10px 0px;
     font-size: 20px;
+    font-family: sans-serif;
+    padding: 0px 30px 0px 30px;
 }
 
 nav a:hover{
@@ -74,7 +72,23 @@ footer{
 }
 
 #select{
-    margin: 10px;
+    float: left;
+    width: 460px;
+    padding: 30px 0px 0px 30px;
+}
+
+#stationSelect{
+    background-color: gray;
+    margin: 5px;
+    border: none;
+    color: white;
+    padding: 5px; 
+    cursor: pointer;
+}
+
+#select p, #stationSelect{
+    margin: 20px 0px 20px 0px;
+    font-family: sans-serif;
 }
 
 #filter{
