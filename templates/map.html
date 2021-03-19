@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block main %}
-    <div id="UI">
+    <div id="userOptions">
         <div id="select">
             <p>Please select a station</p>
             <select id="stations" name="stations"></select>
@@ -18,7 +18,6 @@
                 <input id="slideparking" type="checkbox" display="none" onclick="slideparking_click()"><span class="slider"></span>
             </label>
         </div>
-
         <!--    label for the available bikes toggle switch-->
         <label id="lblfilter2">Filter available bike stations only :</label>
         <div id="filter2">
@@ -26,8 +25,9 @@
             <label class="toggle">
                 <input id="slidebikeavailable" type="checkbox" display="none" onclick="slidebikeavailable_click()"><span class="slider"></span>
             </label>
-        </div>
+        </div> 
     </div>
+
     <div id="map"></div>
 
     <script>
@@ -37,9 +37,10 @@
         selectButton.id = "stationSelect";
         selectButton.value = "submit";
         selectButton.style.display = "block";
-        // Add the select button between within the UI div before the tag with id filter
+        // Add the select button between within the userOptions div before the tag with id filter
         let filter = document.getElementById("filter");
-        document.getElementById("UI").insertBefore(selectButton,filter);
+        select = document.getElementById("select");
+        select.insertBefore(selectButton,select.firstElementChild.nextSibling);
         
         // create a variable to check the status of switch whether the it is on or off
         var parking_slots_filter = false;
