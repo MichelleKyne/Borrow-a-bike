@@ -8,6 +8,10 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
+    return render_template("index.html")
+
+@app.route("/stations")
+def stations():
     f = open('dynamickey.txt')
     line = f.readlines()
     converted_list = []
@@ -33,11 +37,7 @@ def index():
     # convert the array to json format (default=str ensures dates are serializable) and return it
     return json.dumps(json_data,default=str)
 
-@app.route("/home")
-def home():
-    return render_template("index.html")
-
-@app.route("/map")
+@app.route("/stations/map")
 def map():
     return render_template("map.html")
     
