@@ -57,7 +57,7 @@
         let map;
         function initMap() {
             console.clear();
-            fetch("/").then(response => {
+            fetch("/stations").then(response => {
                 return response.json();
             }).then(data => {
                 console.log(data);
