@@ -37,7 +37,7 @@ def stations():
     # convert the array to json format (default=str ensures dates are serializable) and return it
     return json.dumps(json_data,default=str)
 
-@app.route("/stations/map")
+@app.route("/map")
 def map():
     f = open('weatherkey.txt')
     line = f.readlines()
