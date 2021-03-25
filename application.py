@@ -1,44 +1,16 @@
 import pymysql
+from sqlalchemy import create_engine
 from jinja2 import Template
 from flask import Flask, jsonify, render_template
+import pandas as pd
+from pandas import read_sql_query
 import json
-from email.policy import default
+from functools import lru_cache
 
 app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template("index.html")
-
-@app.route("/stations")
-def stations():
-    f = open('dynamickey.txt')
-    line = f.readlines()
-    converted_list = []
-
-    for element in line:
-        converted_list.append(element.strip())
-
-    # initalising variables
-    host = converted_list[0]
-    db_name = converted_list[1]
-    user_name = converted_list[2]
-    password = converted_list[3]
-        
-    db = pymysql.connect(host=host, user=user_name, passwd=password, db=db_name, port=3306)
-    cursor = db.cursor()
-    cursor.execute("SELECT num,name,address,latitude,longitude,bike_stands,stands_free,bikes_free, MAX(last_update) AS most_recent FROM dublinbikes.dbikes GROUP BY num;")
-    row_headers = [x[0] for x in cursor.description]
-    data = cursor.fetchall()
-    # create an array to store the sql data
-    json_data = []
-    for result in data:
-        json_data.append(dict(zip(row_headers, result)))
-    # convert the array to json format (default=str ensures dates are serializable) and return it
-    return json.dumps(json_data,default=str)
-
-@app.route("/map")
-def map():
     f = open('weatherkey.txt')
     line = f.readlines()
     converted_list = []
@@ -69,7 +41,55 @@ def map():
         print("cloud = %s ,condition_icon = %s,condition_text = %s ,precip_mm=%s,temp_c = %s,wind_kph=%s" % \
               (cloud, condition_icon, condition_text, precip_mm, temp_c, wind_kph))
 
-    return render_template("map.html", posts=posts)
+    return render_template("index.html", posts=posts)
+
+@app.route("/stations")
+@lru_cache()
+def stations():
+    f = open('dynamickey.txt')
+    line = f.readlines()
+    converted_list = []
+
+    for element in line:
+        converted_list.append(element.strip())
+
+    # initalising variables
+    host = converted_list[0]
+    db_name = converted_list[1]
+    user_name = converted_list[2]
+    password = converted_list[3]
+        
+    engine = create_engine('mysql+mysqlconnector://michelle:booleRunnings@dublinbikes.caveezprtsl1.us-east-1.rds.amazonaws.com:3306/dublinbikes',echo=True)
+    sql = "SELECT num,name,address,latitude,longitude FROM dublinbikes.stations;"
+    df = pd.read_sql_query(sql, engine)
+    return df.to_json(orient='records') 
+
+@app.route("/dynamic")
+def dynamic():
+    f = open('dynamickey.txt')
+    line = f.readlines()
+    converted_list = []
+
+    for element in line:
+        converted_list.append(element.strip())
+
+    # initalising variables
+    host = converted_list[0]
+    db_name = converted_list[1]
+    user_name = converted_list[2]
+    password = converted_list[3]
+        
+    db = pymysql.connect(host=host, user=user_name, passwd=password, db=db_name, port=3306)
+    cursor = db.cursor()
+    cursor.execute("SELECT name,num,bike_stands,stands_free,bikes_free, MAX(last_update) AS most_recent FROM dublinbikes.dbikes GROUP BY num;")
+    row_headers = [x[0] for x in cursor.description]
+    data = cursor.fetchall()
+    # create an array to store the sql data
+    json_data = []
+    for result in data:
+        json_data.append(dict(zip(row_headers, result)))
+    # convert the array to json format (default=str ensures dates are serializable) and return it
+    return json.dumps(json_data,default=str)
 
 if __name__ == "__main__":
     app.run(debug=True)
