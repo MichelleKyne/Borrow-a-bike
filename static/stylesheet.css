@@ -4,7 +4,7 @@
 #map {
     height: 600px;
     width: 98%;
-    margin: 100px 0px 100px 10px;
+    margin: 0px 0px 100px 20px;
     
 /*
     overflow: hidden;
@@ -124,12 +124,16 @@ footer{
     margin-left: 100px;
 }
 
-#filter1{
+#filter1,#filter2{
     float: left;
 }
 
-#filter2{
-    float: left;
+#colorScale{
+    padding-top: 100px;
+}
+#colorScale img{
+    height: 20px;
+    width: 300px;
 }
 
 .toggle input{
