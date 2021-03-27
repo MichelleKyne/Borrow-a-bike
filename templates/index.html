@@ -46,6 +46,11 @@
                 </label>
             </div> 
         </div>
+        <div id="colorScale">
+            <label style='font-family: sans-serif;'>Stands free</label>
+            <img src=static/scale.png alt='scale'>
+            <label style='font-family: sans-serif;'>Bikes free</label>
+        </div>
     </div>
 
     <div id="map"></div>
@@ -86,8 +91,6 @@
             initMap();
         }
         let map;
-        // array of map markers
-        let markers = [];
         function initMap() {
             // this result is cached using lru_cache decorator
             // static and dynamic arrays logged to console are within the scope of map marker and info window functions
@@ -112,15 +115,30 @@
                 stOp.setAttribute("value",station.num);
                 stOp.setAttribute("label",station.name);
                 dropDownList.appendChild(stOp); 
-
+                // function to create marker colour proportional to free stands
+                function hexFromRGB(r, g, b) {
+                    var color = {
+                        // all stands free - color is fully red
+                        r: r * (dynamic[i].stands_free/dynamic[i].bike_stands),
+                        g: g * 0,
+                        // no stands free - color is fully blue
+                        b: b * (dynamic[i].bikes_free/dynamic[i].bike_stands)
+                    };
+                    return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
+                } 
                 // create unique marker for each station
-                const marker = new google.maps.Marker({
-                    position: {lat: station.latitude, lng: station.longitude},
-                    map: map});
-                    // create an info window to display station and dynamic information
+                const marker = new google.maps.Circle({
+                    strokeColor: "none",
+                    strokeOpacity: 0.5,
+                    strokeWeight: 0.5,
+                    fillColor: hexFromRGB(255,255,255),
+                    fillOpacity: 0.5,
+                    map,
+                    center: { lat: station.latitude, lng: station.longitude },
+                    // radius of circle is proportional to num bikes free
+                    radius: 7*dynamic[i].bikes_free,});
                     var infowindow = new google.maps.InfoWindow({
-                        content: '<h3>'+station.name+'</h3><p><b> Available bikes </b></p><p>'+dynamic[i].bikes_free+'</p>'+
-                                        '<p><b>Parking slots</b></p><p>'+dynamic[i].stands_free,
+                        content: '<h3>'+station.name+'</h3><p><b>Total stands</b></p><p>'+dynamic[i].bike_stands+'</p>'+'<p><b> Available bikes </b></p><p>'+dynamic[i].bikes_free+'</p>'+'<p><b>Parking slots</b></p><p>'+dynamic[i].stands_free,
                     });
 
                     // check if the variable is true and if the bike stands for any of the station is 0
@@ -134,15 +152,16 @@
                         marker.setVisible(false);
                     }
                     // add event listeners to map markers
-                    google.maps.event.addListener(marker,"mouseover",function() {
-                        infowindow.open(map,marker);
+                    google.maps.event.addListener(marker,"mouseover",function(ev) {
+                        infowindow.setPosition(marker.center);
+                        infowindow.open(map);
                     })
                     google.maps.event.addListener(marker,"mouseout",function() {
                         infowindow.close();
                     })
                     google.maps.event.addListener(marker,"click",function() {
                         map.setZoom(15);
-                        map.setCenter(marker.getPosition());
+                        map.setCenter(marker.center);
                     })
                 i++;
                 })
