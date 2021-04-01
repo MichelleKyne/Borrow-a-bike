@@ -49,10 +49,9 @@ nav a:hover{
     background-color: white;
 }*/
 
-.Logo{
+header .Logo{
     width: 150px;
     height: 86px;
-    position: fixed;
     z-index: 1;
 }
 
