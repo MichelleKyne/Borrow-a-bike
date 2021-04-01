@@ -184,3 +184,25 @@ input:checked + .slider:before
 {
     transform: translateX(20px);
 }
+
+.CurrMarker hover{
+    cursor: pointer;
+}
+
+#ChartDetails{
+    position: absolute;
+    margin: 597px 0px 10px 122px;
+    overflow: hidden;
+}
+
+#chart_div{
+    overflow: hidden;
+    position: absolute;
+    margin: 635px -19px 100px 0px;
+}
+
+#HourlyChart{
+    position: absolute;
+    margin: 1140px -19px 0px 0px;
+    overflow: hidden;
+}
