@@ -252,6 +252,7 @@
             })});
         }
 
+
         function WeeklyChart(station_number){
 <!--        send the station number to the url and execute the query in app.py page-->
         fetch("/occupancy/"+station_number).then(response => {
@@ -305,7 +306,6 @@
                  vAxis: {
                     title: 'Avg bikes available',
                     titleTextStyle: { italic: false, fontName: 'Calibri', fontSize: '20', bold: 'true' },
-<!--                    ticks: [0, 20, 40, 60, 80, 100]-->
                 },
                 chartArea: {
                     width: '64%'
