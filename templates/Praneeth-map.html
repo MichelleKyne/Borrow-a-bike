@@ -81,6 +81,15 @@
                 zoom: 12,
             });
 
+            var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
+            const icons = {
+                Current: {
+                    icon: iconBase + "Curr_location.png",
+                },
+            };
+
+
+
             var currWindow =false;
             data.forEach(station => {
                     const marker = new google.maps.Marker({
@@ -124,6 +133,8 @@
 
 
     }
+
+
 
 </script>
  <script
