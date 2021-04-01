@@ -91,5 +91,41 @@ def dynamic():
     # convert the array to json format (default=str ensures dates are serializable) and return it
     return json.dumps(json_data,default=str)
 
+@app.route("/occupancy/<int:station_id>")
+def get_occupancy(station_id):
+    db = pymysql.connect(host="dublinbikes.caveezprtsl1.us-east-1.rds.amazonaws.com", port=int(3306), user="michelle",
+                         passwd="booleRunnings")
+    cursor = db.cursor()
+    sql = f"""select name, FLOOR(avg(bike_stands)) as Avg_bike_stands, FLOOR(avg(bikes_free)) as Avg_bikes_free, DAYNAME(last_update) as Week_Day_No from dublinbikes.dbikes 
+    where num= {station_id} group by num, day(last_update) order by num, last_update desc;"""
+    cursor.execute(sql)
+    row_headers = [x[0] for x in cursor.description]
+    data = cursor.fetchall()
+
+    json_data = []
+    for result in data:
+        json_data.append(dict(zip(row_headers, result)))
+
+    # convert the array to json format and return it
+    return json.dumps(json_data)
+
+@app.route("/hourly/<int:station_id>")
+def get_Hourly(station_id):
+    db = pymysql.connect(host="dublinbikes.caveezprtsl1.us-east-1.rds.amazonaws.com", port=int(3306), user="michelle",
+                         passwd="booleRunnings")
+    cursor = db.cursor()
+    sql = f"""select name, count(num), FLOOR(avg(bike_stands)) as Avg_bike_stands, FLOOR(avg(bikes_free)) as Avg_bikes_free, EXTRACT(HOUR FROM last_update) as Hours from dublinbikes.dbikes 
+    where num={station_id} group by Hours order by Hours asc;"""
+    cursor.execute(sql)
+    row_headers = [x[0] for x in cursor.description]
+    data = cursor.fetchall()
+
+    json_data = []
+    for result in data:
+        json_data.append(dict(zip(row_headers, result)))
+
+    # convert the array to json format and return it
+    return json.dumps(json_data)
+
 if __name__ == "__main__":
     app.run(debug=True)
