@@ -184,6 +184,16 @@ input:checked + .slider:before
     transform: translateX(20px);
 }
 
+.CurrMarker{
+    margin: 69px 5px 0px 1335px;
+    border: white;
+}
+
+.ImgCurr{
+    height: 40px;
+    width: 40px;
+}
+
 .CurrMarker hover{
     cursor: pointer;
 }
