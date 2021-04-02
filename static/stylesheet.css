@@ -2,22 +2,14 @@
        * element that contains the map. */
 
 #map {
-    height: 600px;
+    height: 500px;
     width: 98%;
-    margin: 0px 0px 100px 20px;
-    
-/*
-    overflow: hidden;
-    position: absolute;
-    margin:181px 10px 0px 10px;
-    border: solid 2px;
-*/
+    margin: 10px;
 }
 
 *{
     margin: 0;
     padding: 0;
-/*    background-color: #282828;*/
 }
 
 header {
@@ -75,16 +67,9 @@ footer{
 #weather{
     width: 100%;
 }
-/*
-#weather table{
-    font-family: Arial, Helvetica, sans-serif;
-    border-collapse: collapse;
-    
-}
-*/
 
 #weather div{
-    padding: 20px;
+    padding: 20px 20px 0px 20px;
     font-family: sans-serif;
 }
 
@@ -92,7 +77,6 @@ footer{
     width: 120px;
     height: 120px;
 }
-
 
 #weather p{
     padding: 5px;
@@ -112,15 +96,14 @@ footer{
     cursor: pointer;
 }
 
-#select p, #stationSelect{
+#select #stationSelect{
     margin: 20px 0px 20px 0px;
     font-family: sans-serif;
 }
 
 #filters{
     float: left;
-    margin-top: 100px;
-    margin-left: 100px;
+    margin: 50px 100px 0px 100px;
 }
 
 #filter1,#filter2{
@@ -128,8 +111,9 @@ footer{
 }
 
 #colorScale{
-    padding-top: 100px;
+    padding-top: 50px;
 }
+
 #colorScale img{
     height: 20px;
     width: 300px;
@@ -185,7 +169,7 @@ input:checked + .slider:before
 }
 
 .CurrMarker{
-    margin: 69px 5px 0px 1335px;
+    margin: 10px;
     border: white;
 }
 
@@ -199,19 +183,13 @@ input:checked + .slider:before
 }
 
 #ChartDetails{
-    position: absolute;
-    margin: 597px 0px 10px 122px;
-    overflow: hidden;
+    margin: 10px 0px 10px 10px;
 }
 
 #chart_div{
-    overflow: hidden;
-    position: absolute;
-    margin: 635px -19px 100px 0px;
+
 }
 
 #HourlyChart{
-    position: absolute;
-    margin: 1140px -19px 0px 0px;
-    overflow: hidden;
+    float: left;
 }
