@@ -1,11 +1,14 @@
 import pymysql
 from sqlalchemy import create_engine
 from jinja2 import Template
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 import pandas as pd
 from pandas import read_sql_query
 import json
 from functools import lru_cache
+import requests
+import pickle
+import datetime
 
 app = Flask(__name__)
 
@@ -37,10 +40,6 @@ def index():
         temp_c = row[8]
         wind_kph = row[9]
 
-        # Now print fetched result
-        print("cloud = %s ,condition_icon = %s,condition_text = %s ,precip_mm=%s,temp_c = %s,wind_kph=%s" % \
-              (cloud, condition_icon, condition_text, precip_mm, temp_c, wind_kph))
-
     return render_template("index.html", posts=posts)
 
 @app.route("/stations")
@@ -58,8 +57,8 @@ def stations():
     db_name = converted_list[1]
     user_name = converted_list[2]
     password = converted_list[3]
-        
-    engine = create_engine('mysql+mysqlconnector://michelle:booleRunnings@dublinbikes.caveezprtsl1.us-east-1.rds.amazonaws.com:3306/dublinbikes',echo=True)
+    
+    engine = create_engine(f'mysql+mysqlconnector://{user_name}:{password}@{host}:3306/{db_name}',echo=True)
     sql = "SELECT num,name,address,latitude,longitude FROM dublinbikes.stations;"
     df = pd.read_sql_query(sql, engine)
     return df.to_json(orient='records') 
@@ -126,6 +125,34 @@ def get_Hourly(station_id):
 
     # convert the array to json format and return it
     return json.dumps(json_data)
+
+@app.route("/predict/<int:station_id>/<int:hour>")
+def predict(station_id,hour):
+    
+    r = requests.get("http://api.weatherapi.com/v1/forecast.json?key=d0c63bd44623473da7394707212502&q=Dublin&days=1&aqi=no&alerts=no")
+    data = json.loads(r.text)
+    
+    weather = data['forecast']['forecastday'][0]['hour'][0]
+    prec = weather['precip_mm']
+    temp = weather['temp_c']
+    ws = weather['wind_kph']
+    gust = data['current']['gust_kph']
+    feel = weather['feelslike_c']
+    
+    st = str(station_id)
+    filename = 'station_' + st
+    dbfile = open("models/" + filename, 'rb')     
+    db = pickle.load(dbfile)
+    dbfile.close()
+    
+    day = int(datetime.datetime.today().strftime('%w'))
+    p = db.predict([[day,hour,prec,temp,ws,gust,feel]]) # get a prediction
+    freeBikes = str(p[0][0])
+    
+    json_data = []
+    json_data.append([prec,temp,ws,gust,feel,freeBikes])
+    data = json_data[0]
+    return json.dumps(data)
 
 if __name__ == "__main__":
     app.run(debug=True)
