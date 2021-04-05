@@ -24,8 +24,10 @@
 
     <div id="userOptions" style="clear: both;">
         <div id="select">
-            <p style='font-family: sans-serif;'>Please select a station</p>
+            <p>Prediction: please select a station and time</p>
             <select id="stations" name="stations"></select>
+            <select id="hour" name="hour"></select>
+            <input id="predict" type="button" value="Predict">
         </div>
         
         <div id="filters">
@@ -46,14 +48,14 @@
                 </label>
             </div> 
         </div>
-        <div id="colorScale">
-            <label style='font-family: sans-serif;'>Stands free</label>
-            <img src=static/scale.png alt='scale'>
-            <label style='font-family: sans-serif;'>Bikes free</label>
-        </div>
     </div>
 
     <div id="map"></div>
+    <div id="colorScale">
+        <label style='font-family: sans-serif;'>Stands free</label>
+        <img src=static/scale.png alt='scale'>
+        <label style='font-family: sans-serif;'>Bikes free</label>
+    </div>
     <div id="ChartDetails">
         <label id="stationDetails"></label>
     </div>
@@ -62,23 +64,16 @@
     <footer><p>Copyright &copy; 2009-2021 Dublin Bikes</p></footer>
 
     <script>
-        // Create a dropdown list for the days with the select tag
-        selectButton = document.createElement("input");
-        selectButton.type = "button";
-        selectButton.id = "stationSelect";
-        selectButton.value = "submit";
-        selectButton.style.display = "block";
-        // Add the select button within the select div
-        let filter = document.getElementById("filter");
-        select = document.getElementById("select");
-        select.insertBefore(selectButton,select.firstElementChild.nextSibling);
-        
-        // create a variable to check the status of switch whether the it is on or off
+        // populate time dropdown with remaining hours of the day
+         window.onload = function (e) {
+                createTimeDropdown('#hour');
+         }      
+        // create a variable to check the status of the switch
         var parking_slots_filter = false;
         var bikes_available_filter = false;
-        // create a function to show the markers acc to choise made
+        // create a function to show the markers acc. to choice made
         function slidebikeavailable_click(){
-        // check if the switch is on, if it is on change the variable status and call the map function
+        // check if the switch is on, apply status to variable and call the map function
             if(document.getElementById("slidebikeavailable").checked == true){
                 bikes_available_filter = true;
             }
@@ -96,8 +91,6 @@
             }
             initMap();
         }
-
-        let map;
 
         function initChart(){
             google.charts.load("current", {packages:["corechart"]});
@@ -170,7 +163,7 @@
                     var stOp = document.createElement("option");
                     stOp.setAttribute("value",station.num);
                     stOp.setAttribute("label",station.name);
-                    dropDownList.appendChild(stOp); 
+                    dropDownList.appendChild(stOp);
                     // function to create marker colour proportional to free stands
                     function hexFromRGB(r, g, b) {
                         var color = {
@@ -202,9 +195,9 @@
                         // if any of the station is not having parking slots, then hide that station marker
                             marker.setVisible(false);
                         }
-                        // check if available bikes variable is true and if any station with available bikes as 0
+                        // check if available bikes variable is true and if any station with available bikes is 0
                         if(bikes_available_filter == true && station.bikes_free == 0){
-                        // if any of the station is not having parking slots, then hide that station marker
+                        // if any station does not have parking slots, hide that station marker
                             marker.setVisible(false);
                         }
                         // add event listeners to map markers
@@ -216,29 +209,19 @@
                             infowindow.close();
                         })
                         google.maps.event.addListener(marker,"click",function() {
-//                            map.setZoom(15);
-//                            map.setCenter(marker.center);
+                            // map.setZoom(15);
+                            // map.setCenter(marker.center);
                             WeeklyChart(station.num);
                             HourlyChart(station.num);
                         })
                     i++;
                     })
-                    // function to get the station that is selected in the dropdown list
-                    function getSelectedStation() {
-                        var statSel = document.getElementById("stations");
-                        var statSelLen = statSel.options.length;
-                        for (var i=0; i<statSelLen; i++) {
-                            opt = statSel.options[i];
-                            if (opt.selected === true) {
-                                break;
-                            }
-                        }
-                        return opt.value;
-                    }
                     // Assign onclick handler to the Submit button.
-                    document.getElementById("stationSelect").onclick = function () {
+                    document.getElementById("predict").onclick = function () {
                         selStat = getSelectedStation();
                         numStat = parseInt(selStat,10);
+                        hour = getSelectedHour();
+                        predictBikes(numStat,hour);
                         // zoom and center the map on the selected station
                         for (station of static) {
                             if (station.num == numStat) {
@@ -252,10 +235,49 @@
                     }
             })});
         }
-
-
+        // Functions
+        // function to populate time dropdown menu
+        function createTimeDropdown(selector){
+            var select = $(selector);
+            var today = new Date();
+            var time = today.getHours();
+            for (var i=time + 1; i<24; i++) {
+                var hour = i;
+                var ampm = hour >= 12 ? 'PM' : 'AM';
+                if (hour != 12) {
+                    hour = hour % 12;
+                }
+                select.append($('<option></option>')
+                .attr('value', hour)
+                .text(hour + ":00" + ampm));
+            }
+        }
+        // function to get the station that is selected in the dropdown list
+        function getSelectedStation() {
+            var statSel = document.getElementById("stations");
+            var statSelLen = statSel.options.length;
+            for (var i=0; i<statSelLen; i++) {
+                opt = statSel.options[i];
+                if (opt.selected === true) {
+                    break;
+                }
+            }
+            return opt.value;
+        }
+        // function to get the time that is selected in the dropdown list
+        function getSelectedHour() {
+            var selHour = document.getElementById("hour");
+            var hourSelLen = selHour.options.length;
+            for (var i=0; i<hourSelLen; i++) {
+                opt = selHour.options[i];
+                if (opt.selected === true) {
+                    break;
+                }
+            }
+            return opt.value;
+        }
+        // send the station number to the url and execute the query in app.py page
         function WeeklyChart(station_number){
-    //      send the station number to the url and execute the query in app.py page
             fetch("/occupancy/"+station_number).then(response => {
                 return response.json();
             }).then(data => {
@@ -266,11 +288,11 @@
             var count = 0;
             var iterationCount = 0;
 
-    //      store week days in a array to represent them on x-axis as they are unordered in the json data
+            // store week days in a array to represent them on x-axis as they are unordered in the json data
             var WeeklyDays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
             var AvgBikes_Week = [];
 
-    //          loop the above array and sum all the values and take the average and store the result in a array
+                // loop the above array and sum all the values and take the average and store the result in a array
                 for(var i=0; i<WeeklyDays.length; i++){
                     data.forEach(obj => {
                             if(obj.Week_Day_No == WeeklyDays[i]){
@@ -286,7 +308,7 @@
                     iterationCount = 0;
                 }
 
-    //          display the selected station and max stands available in div
+                // display the selected station and max stands available in div
                 var node = document.getElementById('stationDetails');
                 node.innerHTML = "<p><b>Selected station : </b>"+StationName+".<br><b>The maximum bikes available : </b>"+MaxBikes+"</p>";
 
@@ -319,11 +341,11 @@
                 var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
                 var chart_data = new google.visualization.DataTable();
 
-    //          provide the data type and value name in the below line
+                // provide the data type and value name in the below line
                 chart_data.addColumn('string', "Week_Day_No");
                 chart_data.addColumn('number' ,"Avg_bikes_free" );
 
-    //          loop through all the days in a week and display the avg
+                // loop through all the days in a week and display the avg
                 for(var i=0; i<WeeklyDays.length; i++){
                     chart_data.addRow([WeeklyDays[i], AvgBikes_Week[i]]);
                 }
@@ -377,6 +399,30 @@
                  chart.draw(chart_data, options);
             });
         }
+        
+        function predictBikes(station_number,hour) {
+            fetch("/predict/"+station_number+"/"+hour).then(response => {
+                return response.json();
+            }).then(data => {
+                console.log(data);
+                var container = document.getElementById("select");
+                var removeTable = document.getElementById("predResult");
+                if (removeTable != null) {
+                    container.removeChild(removeTable);
+                }
+                // Construct the table    
+                var table = document.createElement("table");
+                table.id = "predResult";
+                document.getElementById("select").appendChild(table);
+                var tl = table.length;
+                var row = table.insertRow(tl);
+                var [cell1,cell2,cell3,cell4,cell5,cell6] = [row.insertCell(0),row.insertCell(1),row.insertCell(2),row.insertCell(3),row.insertCell(4),row.insertCell(5)];
+                [cell1.outerHTML,cell2.outerHTML,cell3.outerHTML,cell4.outerHTML,cell5.outerHTML,cell6.outerHTML] = ["<th>Precipitation (mm)</th>","<th>Temperature (C)</th>","<th>Wind Speed (kph)</th>","<th>Gust (kph)</th>","<th>Feel (C)</th>","<th>Free Bikes</th>"];
+                var tl = table.length;
+                var row = table.insertRow(tl);
+                var [cell1,cell2,cell3,cell4,cell5,cell6] = [row.insertCell(0),row.insertCell(1),row.insertCell(2),row.insertCell(3),row.insertCell(4),row.insertCell(5)];
+                [cell1.innerHTML,cell2.innerHTML,cell3.innerHTML,cell4.innerHTML,cell5.innerHTML,cell6.innerHTML] = [data[0],data[1],data[2],data[3],data[4],data[5]];         
+        })}
 </script>
 
 <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
