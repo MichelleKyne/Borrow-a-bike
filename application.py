@@ -132,11 +132,11 @@ def predict(station_id,hour):
     r = requests.get("http://api.weatherapi.com/v1/forecast.json?key=d0c63bd44623473da7394707212502&q=Dublin&days=1&aqi=no&alerts=no")
     data = json.loads(r.text)
     
-    weather = data['forecast']['forecastday'][0]['hour'][0]
+    weather = data['forecast']['forecastday'][0]['hour'][hour]
     prec = weather['precip_mm']
     temp = weather['temp_c']
     ws = weather['wind_kph']
-    gust = data['current']['gust_kph']
+    gust = weather['gust_kph']
     feel = weather['feelslike_c']
     
     st = str(station_id)
