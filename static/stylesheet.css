@@ -4,7 +4,13 @@
 #map {
     height: 500px;
     width: 98%;
-    margin: 10px;
+    /*margin: 10px;*/
+    overflow: hidden;
+    position: absolute;
+    top: 181px;
+    left: 0.8%;
+    /*margin:181px 10px 0px 10px;*/
+    border: solid 2px;
 }
 
 *{
@@ -209,4 +215,22 @@ input:checked + .slider:before
 
 #HourlyChart{
     float: left;
+}
+
+#floating-panel {
+  position: absolute;
+  top: 194px;
+  left: 25%;
+  z-index: 5;
+  background-color: #fff;
+  padding: 5px;
+  border: 1px solid #999;
+  text-align: center;
+  font-family: "Roboto", "sans-serif";
+  line-height: 30px;
+  padding-left: 10px;
+}
+
+#floating-panel select{
+    border : 0px;
 }
