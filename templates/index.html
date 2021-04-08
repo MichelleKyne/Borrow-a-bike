@@ -5,6 +5,14 @@
 {% endblock %}
 
 {% block main %}
+    <div id="select">
+        <p style='font-size: 20px;'>Please select a station and time</p>
+        <select id="stations" name="stations"></select>
+        <select id="hour" name="hour"></select>
+        <input id="predict" type="button" value="Select">
+        <div id="result"></div>
+    </div>
+
     <div id="weather">
         {% for post in posts %}
         <div style='float: left;'>
@@ -22,32 +30,23 @@
         {% endfor %}
     </div>
 
-    <div id="userOptions" style="clear: both;">
-        <div id="select">
-            <p>Prediction: please select a station and time</p>
-            <select id="stations" name="stations"></select>
-            <select id="hour" name="hour"></select>
-            <input id="predict" type="button" value="Predict">
+    <div id="filters">
+        <div id="filter1">
+            <!--    label for the parking slot toggle switch-->
+            <label style='font-family: sans-serif;'>Free parking stations:</label>
+            <!--    declare a input type checkbox for available parking slots which acts a toggle switch using css-->
+            <label class="toggle">
+                <input id="slideparking" type="checkbox" display="none" onclick="slideparking_click()"><span class="slider"></span>
+            </label>
         </div>
-        
-        <div id="filters">
-            <div id="filter1">
-                <!--    label for the parking slot toggle switch-->
-                <label style='font-family: sans-serif;'>Free parking stations:</label>
-                <!--    declare a input type checkbox for available parking slots which acts a toggle switch using css-->
-                <label class="toggle">
-                    <input id="slideparking" type="checkbox" display="none" onclick="slideparking_click()"><span class="slider"></span>
-                </label>
-            </div>
-            <div id="filter2">
-                <!--    label for the available bikes toggle switch-->
-                <label style='font-family: sans-serif;'>Free bikes:</label>
-                <!--    declare another input type checkbox for available bikes which acts a toggle switch using css-->
-                <label class="toggle">
-                    <input id="slidebikeavailable" type="checkbox" display="none" onclick="slidebikeavailable_click()"><span class="slider"></span>
-                </label>
-            </div> 
-        </div>
+        <div id="filter2">
+            <!--    label for the available bikes toggle switch-->
+            <label style='font-family: sans-serif;'>Free bikes:</label>
+            <!--    declare another input type checkbox for available bikes which acts a toggle switch using css-->
+            <label class="toggle">
+                <input id="slidebikeavailable" type="checkbox" display="none" onclick="slidebikeavailable_click()"><span class="slider"></span>
+            </label>
+        </div> 
     </div>
 
     <div id="map"></div>
@@ -405,23 +404,27 @@
                 return response.json();
             }).then(data => {
                 console.log(data);
-                var container = document.getElementById("select");
-                var removeTable = document.getElementById("predResult");
-                if (removeTable != null) {
-                    container.removeChild(removeTable);
-                }
-                // Construct the table    
-                var table = document.createElement("table");
-                table.id = "predResult";
-                document.getElementById("select").appendChild(table);
-                var tl = table.length;
-                var row = table.insertRow(tl);
-                var [cell1,cell2,cell3,cell4,cell5,cell6] = [row.insertCell(0),row.insertCell(1),row.insertCell(2),row.insertCell(3),row.insertCell(4),row.insertCell(5)];
-                [cell1.outerHTML,cell2.outerHTML,cell3.outerHTML,cell4.outerHTML,cell5.outerHTML,cell6.outerHTML] = ["<th>Precipitation (mm)</th>","<th>Temperature (C)</th>","<th>Wind Speed (kph)</th>","<th>Gust (kph)</th>","<th>Feel (C)</th>","<th>Free Bikes</th>"];
-                var tl = table.length;
-                var row = table.insertRow(tl);
-                var [cell1,cell2,cell3,cell4,cell5,cell6] = [row.insertCell(0),row.insertCell(1),row.insertCell(2),row.insertCell(3),row.insertCell(4),row.insertCell(5)];
-                [cell1.innerHTML,cell2.innerHTML,cell3.innerHTML,cell4.innerHTML,cell5.innerHTML,cell6.innerHTML] = [data[0],data[1],data[2],data[3],data[4],data[5]];         
+                var container = document.getElementById("result");
+                container.innerHTML = "<p>Expected number of free bikes: " + data[5] + "</p>" ;
+                
+                
+//                var container = document.getElementById("select");
+//                var removeTable = document.getElementById("predResult");
+//                if (removeTable != null) {
+//                    container.removeChild(removeTable);
+//                }
+//                // Construct the table    
+//                var table = document.createElement("table");
+//                table.id = "predResult";
+//                document.getElementById("select").appendChild(table);
+//                var tl = table.length;
+//                var row = table.insertRow(tl);
+//                var [cell1,cell2,cell3,cell4,cell5,cell6] = [row.insertCell(0),row.insertCell(1),row.insertCell(2),row.insertCell(3),row.insertCell(4),row.insertCell(5)];
+//                [cell1.outerHTML,cell2.outerHTML,cell3.outerHTML,cell4.outerHTML,cell5.outerHTML,cell6.outerHTML] = ["<th>Precipitation (mm)</th>","<th>Temperature (C)</th>","<th>Wind Speed (kph)</th>","<th>Gust (kph)</th>","<th>Feel (C)</th>","<th>Free Bikes</th>"];
+//                var tl = table.length;
+//                var row = table.insertRow(tl);
+//                var [cell1,cell2,cell3,cell4,cell5,cell6] = [row.insertCell(0),row.insertCell(1),row.insertCell(2),row.insertCell(3),row.insertCell(4),row.insertCell(5)];
+//                [cell1.innerHTML,cell2.innerHTML,cell3.innerHTML,cell4.innerHTML,cell5.innerHTML,cell6.innerHTML] = [data[0],data[1],data[2],data[3],data[4],data[5]];         
         })}
 </script>
 
