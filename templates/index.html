@@ -49,7 +49,15 @@
             </div> 
         </div>
     </div>
-
+    <div id="floating-panel">
+      <b>Mode of Travel: </b>
+      <select id="mode">
+        <option value="DRIVING">Driving</option>
+        <option value="WALKING">Walking</option>
+        <option value="BICYCLING">Bicycling</option>
+        <option value="TRANSIT">Transit</option>
+      </select>
+    </div>
     <div id="map"></div>
     <div id="colorScale">
         <label style='font-family: sans-serif;'>Stands free</label>
@@ -109,6 +117,10 @@
                     center: {lat: 53.3470, lng: -6.2603},
                     zoom: 13.5,
                 });
+
+                directionsDisplay.setMap(map);
+                var myLatLng;
+
                 // insert current location marker on map    
                 var duplicate_marker = false;
                 infoWindow = new google.maps.InfoWindow();
@@ -125,6 +137,10 @@
                         navigator.geolocation.getCurrentPosition(
                         (position) => {
                             const pos = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                            };
+                            myLatLng = {
                                 lat: position.coords.latitude,
                                 lng: position.coords.longitude,
                             };
@@ -213,9 +229,30 @@
                             // map.setCenter(marker.center);
                             WeeklyChart(station.num);
                             HourlyChart(station.num);
+                            calculateAndDisplayRoute(directionsService, directionsDisplay, marker.getPosition().lat(), marker.getPosition().lng());
                         })
                     i++;
                     })
+
+                    function calculateAndDisplayRoute(directionsService, directionsDisplay, Destination_Lat, Destination_lng){
+                        const selectedMode = document.getElementById("mode").value;
+                        let request = {
+                            origin: myLatLng,
+                            destination: {
+                                lat: Destination_Lat,
+                                lng: Destination_lng
+                            },
+                            travelMode: google.maps.TravelMode[selectedMode]
+                        };
+
+                        directionsService.route(request, function(response, status) {
+                            if(status === 'OK') {
+                                directionsDisplay.setDirections(response);
+                            }else{
+                                window.alert('Direction request failed due to '+ status);
+                            }
+                        });
+                    }
                     // Assign onclick handler to the Submit button.
                     document.getElementById("predict").onclick = function () {
                         selStat = getSelectedStation();
@@ -314,8 +351,9 @@
 
                 var options = {
                     animation: {
-                        duration: 2000,
-                        startup: true //This is the new option
+                      duration: 1500,
+                      easing: 'linear',
+                      startup: true
                     },
                     curveType: 'function',
                     colors: ['black'],
@@ -338,7 +376,7 @@
                     width: '1200',
                     height: '500'
                 }
-                var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+                var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
                 var chart_data = new google.visualization.DataTable();
 
                 // provide the data type and value name in the below line
@@ -363,8 +401,9 @@
 
                 var options = {
                     animation: {
-                        duration: 2000,
-                        startup: true
+                      duration: 1500,
+                      easing: 'linear',
+                      startup: true
                     },
                     curveType: 'function',
                     colors: ['black'],
@@ -388,7 +427,7 @@
                     width: '1200',
                     height: '500'
                 }
-                var chart = new google.visualization.ColumnChart(document.getElementById('HourlyChart'));
+                var chart = new google.visualization.LineChart(document.getElementById('HourlyChart'));
                 var chart_data = new google.visualization.DataTable();
                 chart_data.addColumn('number', "Hour");
                 chart_data.addColumn('number' ,"Avg_bikes_free" );
@@ -427,6 +466,6 @@
 
 <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
 <script async
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIjfPvdos15QUCS8h7xo-wHBao8qCGcwc&callback=initChart">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXGwi384HVo-MXNLWnXcmWYNWujsWi5OI&callback=initChart">
 </script>
 {% endblock %}
