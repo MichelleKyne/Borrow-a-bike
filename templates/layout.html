@@ -2,6 +2,9 @@
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheet.css') }}">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans&family=Roboto&display=swap" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-2.2.4.js"></script>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
             <title>Dublin Bikes: {% block title %}{% endblock %}</title>
@@ -18,7 +21,7 @@
             </nav>
         </header>
         
-        <footer><p style='padding-top: 5px;'>Copyright &copy; 2009-2021 Dublin Bikes</p></footer>
+        <footer><p>Copyright &copy; 2009-2021 Dublin Bikes</p></footer>
 
         <main>
             {% block main %}{% endblock %}
