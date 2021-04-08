@@ -117,9 +117,11 @@
                     center: {lat: 53.3470, lng: -6.2603},
                     zoom: 13.5,
                 });
-
-                directionsDisplay.setMap(map);
+                
+                var directionsService = new google.maps.DirectionsService;
+                var directionsDisplay = new google.maps.DirectionsRenderer;
                 var myLatLng;
+                directionsDisplay.setMap(map);
 
                 // insert current location marker on map    
                 var duplicate_marker = false;
@@ -229,7 +231,7 @@
                             // map.setCenter(marker.center);
                             WeeklyChart(station.num);
                             HourlyChart(station.num);
-                            calculateAndDisplayRoute(directionsService, directionsDisplay, marker.getPosition().lat(), marker.getPosition().lng());
+                            calculateAndDisplayRoute(directionsService, directionsDisplay, station.latitude, station.longitude);
                         })
                     i++;
                     })
