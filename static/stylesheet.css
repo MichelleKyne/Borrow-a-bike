@@ -277,6 +277,6 @@ input:checked + .slider:before
 
 #NearstStation{
     position: absolute;
-    top: 152px;
+    top: 233px;
     left: 1%;
 }
