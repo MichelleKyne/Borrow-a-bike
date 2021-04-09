@@ -13,8 +13,6 @@
                     <select id="stations" name="stations" style="margin-left: 10px";></select>
                     <select id="hour" name="hour"></select>
                     <input id="predict" type="button" value="Select">
-                    <div id="result"></div>
-                    <div id="NearestStation"></div>
                 </div>
                 <div id="filters">
                     <div id="filter1">
@@ -34,6 +32,12 @@
                         </label>
                     </div> 
                 </div>
+                
+                <table id="results">
+                        <tr id="result"><td>Expected no. bikes: </td></tr>
+                        <tr id="nearest"><td>Nearest station: </td></tr>
+                </table>
+                
                 <div id="weather">
                     {% for post in posts %}
                     <div style='float: left;'>
@@ -68,11 +72,16 @@
         
     </div>
 
+<!--
     <div id="ChartDetails">
         <label id="stationDetails"></label>
     </div>
-    <div id="chart_div"></div>
-    <div id="HourlyChart"></div>
+-->
+    <div id="charts">
+        <div id="weeklyChart" class="col-6" style="float: left;"></div>
+        <div id="hourlyChart" class="col-6" style="float: left;"></div>
+    </div>
+    
     
     <footer><p>Copyright &copy; 2009-2021 Dublin Bikes</p></footer>
 
@@ -125,10 +134,9 @@
                     zoom: 13.5,
                 });
                 
-                
                 var myLatLng;
                 directionsDisplay.setMap(map);
-                var NearstStationName;
+                var NearestStationName;
                 var markers = [];
                 
                 const locationButton = document.createElement("button");
@@ -137,16 +145,7 @@
                 locationButton.classList.add("custom-map-control-button");
                 map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
                 
-                fetch("/dynamic").then(response => {
-                    return response.json();
-                }).then(dynamic => {
-                    console.log(dynamic);
-                let i = 0;
-                static.forEach(station => {
-                
-                
-                    // insert current location marker on map
-                    var NearstStation;
+                // insert current location marker on map
                     var duplicate_marker = false;
                     infoWindow = new google.maps.InfoWindow();
                     
@@ -179,7 +178,9 @@
                                 infoWindow.setContent("Location found.");
                                 infoWindow.open(map);
                                 map.setCenter(pos);
-                                find_closest_marker(myLatLng, static);
+                                var row = document.getElementById("nearest");
+                                var newCell = row.insertCell(1);
+                                newCell.innerHTML = find_closest_marker(myLatLng, static);
                             },
                             () => {
                               handleLocationError(true, infoWindow, map.getCenter());
@@ -191,56 +192,60 @@
                     });
                     
                     function rad(x) {return x*Math.PI/180;}
-                function find_closest_marker(event, data) {
-<!--                    To Capture the current location of the user. Enable the below 2 lines -->
-                    var lat = event.lat;
-                    var lng = event.lng;
-<!--                    var lat = 53.3289;-->
-<!--                    var lng = 6.2305;-->
-                    var R = 6371; // radius of earth in km
-                    var distances = [];
-                    var closest = -1;
-                    var i=0;
-                    var t;
-                    var n;
-                    var dic;
-                    data.forEach(row => {
+                    function find_closest_marker(event, data) {
+                        // To Capture the current location of the user. Enable the below 2 lines
+                        var lat = event.lat;
+                        var lng = event.lng;
+                        // var lat = 53.3289;
+                        // var lng = 6.2305;
+                        var R = 6371; // radius of earth in km
+                        var distances = [];
+                        var closest = -1;
+                        var i=0;
+                        var t;
+                        var n;
+                        var dic;
+                        data.forEach(row => {
+                            var mlat = row.latitude;
+                            var mlng = row.longitude;
+                            var dLat  = rad(mlat - lat);
+                            var dLong = rad(mlng - lng);
+                            var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                                Math.cos(rad(lat)) * Math.cos(rad(lat)) * Math.sin(dLong/2) * Math.sin(dLong/2);
+                            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                            var d = R * c;
+                            distances[i] = d;
+                            if ( closest == -1 || d < distances[closest] ) {
+                                closest = i;
+                                NearestStationName = row.address;
+                                n = row.number;
+                                dic = {
+                                lat: row.latitude,
+                                lng: row.longitude,
 
-                        var mlat = row.latitude;
-                        var mlng = row.longitude;
-                        var dLat  = rad(mlat - lat);
-                        var dLong = rad(mlng - lng);
-                        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                            Math.cos(rad(lat)) * Math.cos(rad(lat)) * Math.sin(dLong/2) * Math.sin(dLong/2);
-                        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                        var d = R * c;
-                        distances[i] = d;
-                        if ( closest == -1 || d < distances[closest] ) {
-                            closest = i;
-                            NearstStationName = row.address;
-                            n = row.number;
-                            dic = {
-                            lat: row.latitude,
-                            lng: row.longitude,
-                            
-                          };
+                              };
+                            }
+                            i = i+1;
+                        })
+                        for (var i=0; i<markers.length; i++) {
+                            if((markers[i].getPosition().lat() == dic.lat) && (markers[i].getPosition().lng() == dic.lng)){
+                                var icon = {
+                                    url: "{{url_for('static', filename='Nearest.png')}}",
+                                    scaledSize: new google.maps.Size(32, 40),
+                              };
+                                markers[i].setIcon(icon);
+                            }
                         }
-                        i = i+1;
-                    })
-                    document.getElementById("NearstStation").innerHTML = "<b>Nearst station is </b>"+NearstStationName;
-                    
-                    for (var i=0; i<markers.length; i++) {
-                        if((markers[i].getPosition().lat() == dic.lat) && (markers[i].getPosition().lng() == dic.lng)){
-                            var icon = {
-                                url: "{{url_for('static', filename='Nearst.png')}}",
-                                scaledSize: new google.maps.Size(32, 40),
-                          };
-                            markers[i].setIcon(icon);
-                        }
+                        return NearestStationName;
                     }
-               }
-                    
                 
+                fetch("/dynamic").then(response => {
+                    return response.json();
+                }).then(dynamic => {
+                    console.log(dynamic);
+                    
+                let i = 0;
+                static.forEach(station => {                    
                     dropDownList = document.getElementById("stations");
                     // populate select element with station options
                     var stOp = document.createElement("option");
@@ -385,10 +390,37 @@
             }).then(data => {
                 console.log(data);
 
-            var StationName = "";
+            var StationName = data[0].name;
             var MaxBikes = 0;
             var count = 0;
             var iterationCount = 0;
+                
+            var options = {
+                animation: {
+                  duration: 1500,
+                  easing: 'linear',
+                  startup: true
+                },
+                curveType: 'function',
+                colors: ['red'],
+                legend: 'none',
+                height: 250,
+                tooltip: { isHtml: true },
+                hAxis: {
+                    slantedText: false,
+                },
+                 vAxis: {
+                    title: 'Average Bikes Available',
+                    titleTextStyle: { italic: false, fontName: 'Calibri', fontSize: '20', bold: 'false' },
+                },
+                chartArea: {
+                    width: '64%'
+                },
+                title: StationName + " Weekly Data",
+                titleTextStyle: { fontName: 'Calibri', fontSize: '20' },
+                width: '100%',
+                height: '500'
+            }
 
             // store week days in an array to represent them on x-axis as they are unordered in the json data
             var WeeklyDays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
@@ -398,7 +430,6 @@
                 for(var i=0; i<WeeklyDays.length; i++){
                     data.forEach(obj => {
                             if(obj.Week_Day_No == WeeklyDays[i]){
-                                StationName = obj.name;
                                 MaxBikes = obj.Avg_bike_stands;
                                 count = count + obj.Avg_bikes_free;
                                 iterationCount = iterationCount + 1;
@@ -409,39 +440,7 @@
                     count = 0;
                     iterationCount = 0;
                 }
-
-                // display the selected station and max stands available in div
-                var node = document.getElementById('stationDetails');
-                node.innerHTML = "<p><b>Selected station : </b>"+StationName+".<br><b>The maximum bikes available : </b>"+MaxBikes+"</p>";
-
-                var options = {
-                    animation: {
-                      duration: 1500,
-                      easing: 'linear',
-                      startup: true
-                    },
-                    curveType: 'function',
-                    colors: ['black'],
-                    legend: 'none',
-                    height: 250,
-                    tooltip: { isHtml: true },
-                    hAxis: {
-                        slantedText: true,
-                        slantedTextAngle: 45
-                    },
-                     vAxis: {
-                        title: 'Avg bikes available',
-                        titleTextStyle: { italic: false, fontName: 'Calibri', fontSize: '20', bold: 'true' },
-                    },
-                    chartArea: {
-                        width: '64%'
-                    },
-                    title: "Weekly availability data",
-                    titleTextStyle: { italic: true, fontName: 'Calibri', fontSize: '20', bold: 'true' },
-                    width: '1200',
-                    height: '500'
-                }
-                var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+                var chart = new google.visualization.LineChart(document.getElementById('weeklyChart'));
                 var chart_data = new google.visualization.DataTable();
 
                 // provide the data type and value name in the below line
@@ -450,7 +449,7 @@
 
                 // loop through all the days in a week and display the avg
                 for(var i=0; i<WeeklyDays.length; i++){
-                    chart_data.addRow([WeeklyDays[i], AvgBikes_Week[i]]);
+                    chart_data.addRow([WeeklyDays[i].substr(0, 3), AvgBikes_Week[i]]);
                 }
                 chart.draw(chart_data, options);
             });
@@ -463,6 +462,8 @@
                 return response.json();
             }).then(data => {
                 console.log(data);
+                
+                var StationName = data[0].name;
 
                 var options = {
                     animation: {
@@ -471,7 +472,7 @@
                       startup: true
                     },
                     curveType: 'function',
-                    colors: ['black'],
+                    colors: ['red'],
                     legend: 'none',
                     height: 250,
                     tooltip: { isHtml: true },
@@ -480,19 +481,19 @@
 
                     },
                      vAxis: {
-                        title: 'Avg bikes available',
-                        titleTextStyle: { italic: false, fontName: 'Calibri', fontSize: '20', bold: 'true' },
+                        title: 'Average Bikes Available',
+                        titleTextStyle: { italic: false, fontName: 'Calibri', fontSize: '20', bold: 'false' },
                     },
                     chartArea: {
 
                         width: '64%'
                     },
-                    title: "Hourly availability data",
-                    titleTextStyle: { italic: true, font: 'Calibri', fontSize: '20', bold: 'true' },
-                    width: '1200',
+                    title: StationName + " Hourly Data",
+                    titleTextStyle: { font: 'Calibri', fontSize: '20' },
+                    width: '100%',
                     height: '500'
                 }
-                var chart = new google.visualization.LineChart(document.getElementById('HourlyChart'));
+                var chart = new google.visualization.LineChart(document.getElementById('hourlyChart'));
                 var chart_data = new google.visualization.DataTable();
                 chart_data.addColumn('number', "Hour");
                 chart_data.addColumn('number' ,"Avg_bikes_free" );
@@ -509,8 +510,9 @@
                 return response.json();
             }).then(data => {
                 console.log(data);
-                var container = document.getElementById("result");
-                container.innerHTML = "<p>Expected number of free bikes: " + data[5] + "</p>" ;
+                var row = document.getElementById("result");
+                var newCell = row.insertCell(1);
+                newCell.innerHTML = data[5];
         })}
 </script>
 
