@@ -5,57 +5,56 @@
 {% endblock %}
 
 {% block main %}
-    <div class="row">        
+    <div class="row">
         <div class="col-3 container">
-            <div id="userInterface">
-                <div id="select">
-                    <p>Please select a station and time</p>
-                    <select id="stations" name="stations" style="margin-left: 10px";></select>
-                    <select id="hour" name="hour"></select>
-                    <input id="predict" type="button" value="Select">
-                    <div id="result"></div>
+            <div id="select">
+                <p style='font-size: 20px;'>Please select a station and time</p>
+                <select id="stations" name="stations"></select>
+                <select id="hour" name="hour"></select>
+                <input id="predict" type="button" value="Select">
+                <div id="result"></div>
+            </div>
+        </div>
+
+        <div class="col-5 container">
+            <div id="weather">
+                {% for post in posts %}
+                <div style='float: left;'>
+                    <img src={{post[2]}} alt='weather icon'>
                 </div>
-                <div id="filters">
-                    <div id="filter1">
-                        <!--    label for the parking slot toggle switch-->
-                        <label style='font-family: sans-serif;'>Free parking stations:</label>
-                        <!--    declare a input type checkbox for available parking slots which acts a toggle switch using css-->
-                        <label class="toggle">
-                            <input id="slideparking" type="checkbox" display="none" onclick="slideparking_click()"><span class="slider"></span>
-                        </label>
-                    </div>
-                    <div id="filter2">
-                        <!--    label for the available bikes toggle switch-->
-                        <label style='font-family: sans-serif;'>Free bikes:</label>
-                        <!--    declare another input type checkbox for available bikes which acts a toggle switch using css-->
-                        <label class="toggle">
-                            <input id="slidebikeavailable" type="checkbox" display="none" onclick="slidebikeavailable_click()"><span class="slider"></span>
-                        </label>
-                    </div> 
+                <div style='float: left;'>
+                    <p style="font-size: 40px;">{{post[8]}}&#176C</p>
+                    <p style="font-size: 20px;">{{post[3]}}</p>
                 </div>
-                <div id="weather">
-                    {% for post in posts %}
-                    <div style='float: left;'>
-                        <img src={{post[2]}} alt='weather icon'>
-                    </div>
-                    <div style='float: left;'>
-                        <p style='font-size: 40px;'>{{post[8]}}&#176C</p>
-                        <p style='font-size: 20px;'>{{post[3]}}</p>
-                    </div>
-                    <div style='clear: both; text-align: center;'>
-                        <p><b>Cloud cover: </b>{{post[1]}}%</p>
-                        <p><b>Precipitation: </b>{{post[7]}}</p>
-                        <p><b>Wind speed: </b>{{post[9]}}</p>
-                    </div>
-                    {% endfor %}
+                <div style='float: left;'>
+                    <p><b>Cloud cover: </b>{{post[1]}}%</p>
+                    <p><b>Precipitation: </b>{{post[7]}}</p>
+                    <p><b>Wind speed: </b>{{post[9]}}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-4 container">
+            <div id="filters">
+                <div id="filter1">
+                    <!--    label for the parking slot toggle switch-->
+                    <label style='font-family: sans-serif;'>Free parking stations:</label>
+                    <!--    declare a input type checkbox for available parking slots which acts a toggle switch using css-->
+                    <label class="toggle">
+                        <input id="slideparking" type="checkbox" display="none" onclick="slideparking_click()"><span class="slider"></span>
+                    </label>
+                </div>
+                <div id="filter2">
+                    <!--    label for the available bikes toggle switch-->
+                    <label style='font-family: sans-serif;'>Free bikes:</label>
+                    <!--    declare another input type checkbox for available bikes which acts a toggle switch using css-->
+                    <label class="toggle">
+                        <input id="slidebikeavailable" type="checkbox" display="none" onclick="slidebikeavailable_click()"><span class="slider"></span>
+                    </label>
                 </div>
             </div>
         </div>
-        
-        <div class="col-9 container">
-            <div id="map"></div>
-        </div>
-        
     </div>
 
     <div id="floating-panel">
@@ -68,19 +67,21 @@
       </select>
     </div>
     <div id="NearstStation"></div>
+    
+    <div id="map"></div>
     <div id="ChartDetails">
         <label id="stationDetails"></label>
     </div>
     <div id="chart_div"></div>
     <div id="HourlyChart"></div>
-        
+    
     <footer><p>Copyright &copy; 2009-2021 Dublin Bikes</p></footer>
 
     <script>
         // populate time dropdown with remaining hours of the day
          window.onload = function (e) {
                 createTimeDropdown('#hour');
-         }      
+         }
         // create a variable to check the status of the switch
         var parking_slots_filter = false;
         var bikes_available_filter = false;
@@ -130,6 +131,13 @@
                 directionsDisplay.setMap(map);
                 var NearstStationName;
                 var markers = [];
+                
+                const locationButton = document.createElement("button");
+                locationButton.innerHTML = '<img class="ImgCurr" src="{{url_for('static', filename='CurrentLocation.png')}}" title="View current location" alt="Current Location"/>';
+                locationButton.className = "CurrMarker";
+                locationButton.classList.add("custom-map-control-button");
+                map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
+                
                 fetch("/dynamic").then(response => {
                     return response.json();
                 }).then(dynamic => {
@@ -142,11 +150,7 @@
                     var NearstStation;
                     var duplicate_marker = false;
                     infoWindow = new google.maps.InfoWindow();
-                    const locationButton = document.createElement("button");
-                    locationButton.innerHTML = '<img class="ImgCurr" src="{{url_for('static', filename='CurrentLocation.png')}}" title="View current location" alt="Current Location"/>';
-                    locationButton.className = "CurrMarker";
-                    locationButton.classList.add("custom-map-control-button");
-                    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
+                    
                     locationButton.addEventListener("click", () => {
                         if(duplicate_marker){
                             duplicate_marker = false;
@@ -176,7 +180,7 @@
                                 infoWindow.setContent("Location found.");
                                 infoWindow.open(map);
                                 map.setCenter(pos);
-                                find_closest_marker(myLatLng, data);
+                                find_closest_marker(myLatLng, static);
                             },
                             () => {
                               handleLocationError(true, infoWindow, map.getCenter());
@@ -203,8 +207,8 @@
                     var dic;
                     data.forEach(row => {
 
-                        var mlat = row.position_lat;
-                        var mlng = row.position_lng;
+                        var mlat = row.latitude;
+                        var mlng = row.longitude;
                         var dLat  = rad(mlat - lat);
                         var dLong = rad(mlng - lng);
                         var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
@@ -217,16 +221,15 @@
                             NearstStationName = row.address;
                             n = row.number;
                             dic = {
-                            lat: row.position_lat,
-                            lng: row.position_lng,
+                            lat: row.latitude,
+                            lng: row.longitude,
                             
                           };
                         }
                         i = i+1;
                     })
                     document.getElementById("NearstStation").innerHTML = "<b>Nearst station is </b>"+NearstStationName;
-                    console.log(markers[n].getPosition().lat());
-                    console.log(dic.lat);
+                    
                     for (var i=0; i<markers.length; i++) {
                         if((markers[i].getPosition().lat() == dic.lat) && (markers[i].getPosition().lng() == dic.lng)){
                             var icon = {
@@ -256,12 +259,14 @@
                         else {
                             return "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
                         }
-                    } 
+                    }
                     // create unique marker for each station
                     const marker = new google.maps.Marker({
                         position: {lat: station.latitude, lng: station.longitude},
-                        icon: getIcon(dynamic[i].bike_stands,dynamic[i].bikes_free),  
+                        icon: getIcon(dynamic[i].bike_stands,dynamic[i].bikes_free),
                         map: map});
+                        
+                        markers.push(marker);
                         // create an info window to display station and dynamic information
                             var infowindow = new google.maps.InfoWindow({
                                 content: '<h3>'+station.name+'</h3><p><b>Total stands</b></p><p>'+dynamic[i].bike_stands+'</p>'+'<p><b> Available bikes </b></p><p>'+dynamic[i].bikes_free+'</p>'+'<p><b>Parking slots</b></p><p>'+dynamic[i].stands_free,
@@ -506,7 +511,7 @@
             }).then(data => {
                 console.log(data);
                 var container = document.getElementById("result");
-                container.innerHTML = "<p>Expected number of free bikes: " + data[5] + "</p>" ;        
+                container.innerHTML = "<p>Expected number of free bikes: " + data[5] + "</p>" ;
         })}
 </script>
 
