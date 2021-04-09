@@ -24,17 +24,6 @@
 }
 */
 
-#map {
-    height: 500px;
-    width: 100%;
-}
-
-#userInterface {
-    background-color: lightblue;
-    height: 500px;
-    width: 100%;
-}
-
 *{
     margin: 0;
     padding: 0;
@@ -64,11 +53,6 @@ nav a:hover{
     cursor: pointer;
 }
 
-/*.searchbox{
-    width: 100px;
-    background-color: white;
-}*/
-
 header .Logo{
     width: 200px;
     height: 105px;
@@ -90,6 +74,23 @@ footer{
 
 footer p{
     padding: 5px;
+    font-family: 'Poppins', sans-serif;
+}
+
+#map {
+    height: 500px;
+    width: 100%;
+}
+
+#userInterface {
+    background-color: lightblue;
+    height: 500px;
+    width: 100%;
+}
+
+.container{
+    float: left;
+    margin-top: -10px;
 }
 
 #weather{
@@ -108,31 +109,45 @@ footer p{
     color:  black;
 }
 
-.container{
-    float: left;
-    margin-top: -10px;
-}
-
 #select{
     display: inline-block;
     width: 100%;
 }
+
 #select > p, select{
     padding: 10px;
 }
+
 #select p{
     font-family: sans-serif;
     color: black;
     font-size: 20px;
 }
+
+#result p{
+    font-family: sans-serif;
+    font-size: 20px;
+    color:  black;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+#NearestStation{
+    
+}
+
 #weather{
     display: inline-block;
 }
+
 #weather div{
-    padding: 20px;
+    padding: 5px;
 }
+
 #filters{
     display: inline-block;
+    margin-top: 10px;
+    margin-left: 10px;
 }
 
 #predict{
@@ -148,26 +163,6 @@ footer p{
 }
 #predict:hover{
     cursor: pointer;
-}
-
-/*
-table {
-    width: 100%;
-}           
-table, th, td {
-    border: solid;
-    border-color: white;
-    border-collapse: collapse;
-    padding: 5px;
-}
-td, th {
-    font-family: sans-serif;
-    text-align: center;
-}
-*/
-
-#filters{
-/*    padding-top: 100px;*/
 }
 
 #filter1,#filter2{
@@ -249,12 +244,6 @@ input:checked + .slider:before
 
 #HourlyChart{
     float: left;
-}
-
-#result p{
-    font-family: sans-serif;
-    font-size: 20px;
-    color:  #084C55;
 }
 
 #floating-panel {
