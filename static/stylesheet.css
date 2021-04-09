@@ -256,7 +256,7 @@ input:checked + .slider:before
     position: absolute;
     top: 194px;
     left: 25%;
-    z-index: 1;
+    z-index: 5;
     background-color: #fff;
     padding: 5px;
     border: 1px solid #999;
@@ -268,4 +268,10 @@ input:checked + .slider:before
 
 #floating-panel select{
     border : 0px;
+}
+
+#NearstStation{
+    position: absolute;
+    top: 152px;
+    left: 1%;
 }
