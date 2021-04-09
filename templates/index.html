@@ -14,6 +14,7 @@
                     <select id="hour" name="hour"></select>
                     <input id="predict" type="button" value="Select">
                     <div id="result"></div>
+                    <div id="NearestStation"></div>
                 </div>
                 <div id="filters">
                     <div id="filter1">
@@ -39,16 +40,16 @@
                         <img src={{post[2]}} alt='weather icon'>
                     </div>
                     <div style='float: left;'>
-                        <p style='font-size: 40px;'>{{post[8]}}&#176C</p>
-                        <p style='font-size: 20px;'>{{post[3]}}</p>
+                        <p style="font-size: 40px;">{{post[8]}}&#176C</p>
+                        <p style="font-size: 20px;">{{post[3]}}</p>
                     </div>
-                    <div style='clear: both; text-align: center;'>
-                        <p><b>Cloud cover: </b>{{post[1]}}%</p>
-                        <p><b>Precipitation: </b>{{post[7]}}</p>
-                        <p><b>Wind speed: </b>{{post[9]}}</p>
+                    <div style='float: left;'>
+                        <p>Cloud cover: {{post[1]}}%</p>
+                        <p>Precipitation: {{post[7]}}</p>
+                        <p>Wind speed: {{post[9]}}</p>
                     </div>
                     {% endfor %}
-                </div>
+                </div>        
             </div>
         </div>
         
@@ -62,7 +63,6 @@
                     <option value="TRANSIT">Transit</option>
                 </select>
             </div>
-            <div id="NearstStation"></div>
             <div id="map"></div>
         </div>
         
@@ -256,7 +256,7 @@
                             return "http://maps.google.com/mapfiles/ms/icons/red-dot.png"
                         }
                         else {
-                            return "http://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+                            return "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
                         }
                     }
                     // create unique marker for each station
