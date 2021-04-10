@@ -10,7 +10,7 @@
             <div id="userInterface">
                 <div id="select">
                     <p>Please select a station and time</p>
-                    <select id="stations" name="stations" style="margin-left: 10px";></select>
+                    <select id="stations" name="stations" autocomplete="off" style="margin-left: 10px";></select>
                     <select id="hour" name="hour"></select>
                     <input id="predict" type="button" value="Select">
                 </div>
@@ -69,14 +69,8 @@
             </div>
             <div id="map"></div>
         </div>
-        
     </div>
 
-<!--
-    <div id="ChartDetails">
-        <label id="stationDetails"></label>
-    </div>
--->
     <div id="charts">
         <div id="weeklyChart" class="col-6" style="float: left;"></div>
         <div id="hourlyChart" class="col-6" style="float: left;"></div>
@@ -86,6 +80,35 @@
     <footer><p>Copyright &copy; 2009-2021 Dublin Bikes</p></footer>
 
     <script>
+        // splash screen
+        function loading() {
+            const splash = document.createElement("div");
+            splash.className = "overlay";
+            splash.id = "splash";
+            splash.innerHTML = "<img class='Logo' src='{{ url_for('static', filename='splash.png') }}' alt='Logo'>";
+            document.getElementsByTagName("body")[0].appendChild(splash);
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    resolve('resolved');
+                }, 2000);
+            });
+            document.getElementsByTagName("body")[0].removeChild(splash);
+        }
+        
+        function removeSplash() {
+            const splash = document.getElementById("splash");
+            document.getElementsByTagName("body")[0].removeChild(splash);
+        }
+
+        async function asyncCall() {
+            console.log('calling');
+            const result = await loading();
+            console.log(result);
+            removeSplash();
+        }
+
+        asyncCall();
+        
         // populate time dropdown with remaining hours of the day
          window.onload = function (e) {
                 createTimeDropdown('#hour');
@@ -120,7 +143,7 @@
         }
 
         function initMap() {
-            // this result is cached using lru_cache decorator
+            // the result of fetch("/stations") is cached using lru_cache decorator
             // static and dynamic arrays logged to console are within the scope of map marker and info window functions
             fetch("/stations").then(response => {
                 return response.json();
@@ -139,13 +162,26 @@
                 var NearestStationName;
                 var markers = [];
                 
+                static.forEach(station => {                    
+                    dropDownList = document.getElementById("stations");
+                    // populate select element with station options
+                    var stOp = document.createElement("option");
+                    stOp.setAttribute("value",station.num);
+                    stOp.setAttribute("label",station.name);
+                    // assign selected attribute to previously selected station stored in localStorage
+                    if (parseInt(stOp.value) == parseInt(localStorage['selSt'])) {
+                        stOp.selected = true;
+                    }
+                    dropDownList.appendChild(stOp);
+                });
+                
                 const locationButton = document.createElement("button");
                 locationButton.innerHTML = '<img class="ImgCurr" src="{{url_for('static', filename='CurrentLocation.png')}}" title="View current location" alt="Current Location"/>';
                 locationButton.className = "CurrMarker";
                 locationButton.classList.add("custom-map-control-button");
                 map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
                 
-                // insert current location marker on map
+                    // insert current location marker on map
                     var duplicate_marker = false;
                     infoWindow = new google.maps.InfoWindow();
                     
@@ -196,8 +232,6 @@
                         // To Capture the current location of the user. Enable the below 2 lines
                         var lat = event.lat;
                         var lng = event.lng;
-                        // var lat = 53.3289;
-                        // var lng = 6.2305;
                         var R = 6371; // radius of earth in km
                         var distances = [];
                         var closest = -1;
@@ -246,12 +280,6 @@
                     
                 let i = 0;
                 static.forEach(station => {                    
-                    dropDownList = document.getElementById("stations");
-                    // populate select element with station options
-                    var stOp = document.createElement("option");
-                    stOp.setAttribute("value",station.num);
-                    stOp.setAttribute("label",station.name);
-                    dropDownList.appendChild(stOp);
                     // function to create marker colour proportional to free stands
                     function getIcon(totalStands,bikesFree) {
                         if (bikesFree/totalStands > 0.6) {
@@ -369,6 +397,7 @@
                     break;
                 }
             }
+            localStorage['selSt'] = opt.value;
             return opt.value;
         }
         // function to get the time that is selected in the dropdown list
