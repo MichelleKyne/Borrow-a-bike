@@ -269,3 +269,21 @@ input:checked + .slider:before
 #floating-panel select{
     border : 0px;
 }
+
+.overlay{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  background-color: #084C55
+}
+
+.overlay img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%; 
+    
+}
