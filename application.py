@@ -96,7 +96,7 @@ def get_occupancy(station_id):
                          passwd="booleRunnings")
     cursor = db.cursor()
     sql = f"""select name, FLOOR(avg(bike_stands)) as Avg_bike_stands, FLOOR(avg(bikes_free)) as Avg_bikes_free, DAYNAME(last_update) as Week_Day_No from dublinbikes.dbikes 
-    where num= {station_id} group by num, day(last_update) order by num, last_update desc;"""
+        where num= {station_id} group by Week_Day_No order by Week_Day_No DESC;"""
     cursor.execute(sql)
     row_headers = [x[0] for x in cursor.description]
     data = cursor.fetchall()
