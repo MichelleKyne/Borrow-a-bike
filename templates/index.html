@@ -9,8 +9,8 @@
         <div class="col-3 container">
             <div id="userInterface">
                 <div id="select">
-                    <p>Please select a station and time</p>
-                    <select id="stations" name="stations" autocomplete="off" style="margin-left: 10px";></select>
+                    <p><i>Please select a station and time</i></p>
+                    <select id="stations" name="stations" autocomplete="off"></select>
                     <select id="hour" name="hour"></select>
                     <input id="predict" type="button" value="Select">
                 </div>
@@ -25,7 +25,7 @@
                     </div>
                     <div id="filter2">
                         <!--    label for the available bikes toggle switch-->
-                        <label style='font-family: sans-serif;'>Free bikes:</label>
+                        <label style='font-family: sans-serif;'>Free bike stations:</label>
                         <!--    declare another input type checkbox for available bikes which acts a toggle switch using css-->
                         <label class="toggle">
                             <input id="slidebikeavailable" type="checkbox" display="none" onclick="slidebikeavailable_click()"><span class="slider"></span>
@@ -34,20 +34,21 @@
                 </div>
                 
                 <table id="results">
-                        <tr id="result"><td>Expected no. bikes: </td></tr>
-                        <tr id="nearest"><td>Nearest station: </td></tr>
+                        <tr style="margin-left:9px;"><td><i><b>Note: Select station to get the results below.</b></i></td></tr>
+                        <tr id="result"><td><i>Expected no. bikes: </i></td></tr>
+                        <tr id="nearest"><td><i>Nearest station: </i></td></tr>
                 </table>
                 
                 <div id="weather">
                     {% for post in posts %}
-                    <div style='float: left;'>
+                    <div id="Weather_Image" style='float: left;'>
                         <img src={{post[2]}} alt='weather icon'>
                     </div>
-                    <div style='float: left;'>
+                    <div id="Weather_temp" style='float: left;'>
                         <p style="font-size: 40px;">{{post[8]}}&#176C</p>
                         <p style="font-size: 20px;">{{post[3]}}</p>
                     </div>
-                    <div style='float: left;'>
+                    <div id="Weather_details" style='float: left;'>
                         <p>Cloud cover: {{post[1]}}%</p>
                         <p>Precipitation: {{post[7]}}</p>
                         <p>Wind speed: {{post[9]}}</p>
@@ -66,6 +67,12 @@
                     <option value="BICYCLING">Bicycling</option>
                     <option value="TRANSIT">Transit</option>
                 </select>
+            </div>
+            <div id="Night-mode">
+              <b>Night mode: </b>
+              <label class="toggle">
+                    <input id="slideNightMode" type="checkbox" display="none"><span class="slider"></span>
+                </label>
             </div>
             <div id="map"></div>
         </div>
@@ -156,6 +163,109 @@
                     center: {lat: 53.3470, lng: -6.2603},
                     zoom: 13.5,
                 });
+                
+                document.getElementById("Night-mode").addEventListener("click", () => {
+                if(document.getElementById("slideNightMode").checked == true)
+                    {
+                      map.setOptions({
+                      styles: [
+                          { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+                          { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+                          { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+                          {
+                            featureType: "administrative.locality",
+                            elementType: "labels.text.fill",
+                            stylers: [{ color: "#d59563" }],
+                          },
+                          {
+                            featureType: "poi",
+                            elementType: "labels.text.fill",
+                            stylers: [{ color: "#d59563" }],
+                          },
+                          {
+                            featureType: "poi.park",
+                            elementType: "geometry",
+                            stylers: [{ color: "#263c3f" }],
+                          },
+                          {
+                            featureType: "poi.park",
+                            elementType: "labels.text.fill",
+                            stylers: [{ color: "#6b9a76" }],
+                          },
+                          {
+                            featureType: "road",
+                            elementType: "geometry",
+                            stylers: [{ color: "#38414e" }],
+                          },
+                          {
+                            featureType: "road",
+                            elementType: "geometry.stroke",
+                            stylers: [{ color: "#212a37" }],
+                          },
+                          {
+                            featureType: "road",
+                            elementType: "labels.text.fill",
+                            stylers: [{ color: "#9ca5b3" }],
+                          },
+                          {
+                            featureType: "road.highway",
+                            elementType: "geometry",
+                            stylers: [{ color: "#746855" }],
+                          },
+                          {
+                            featureType: "road.highway",
+                            elementType: "geometry.stroke",
+                            stylers: [{ color: "#1f2835" }],
+                          },
+                          {
+                            featureType: "road.highway",
+                            elementType: "labels.text.fill",
+                            stylers: [{ color: "#f3d19c" }],
+                          },
+                          {
+                            featureType: "transit",
+                            elementType: "geometry",
+                            stylers: [{ color: "#2f3948" }],
+                          },
+                          {
+                            featureType: "transit.station",
+                            elementType: "labels.text.fill",
+                            stylers: [{ color: "#d59563" }],
+                          },
+                          {
+                            featureType: "water",
+                            elementType: "geometry",
+                            stylers: [{ color: "#17263c" }],
+                          },
+                          {
+                            featureType: "water",
+                            elementType: "labels.text.fill",
+                            stylers: [{ color: "#515c6d" }],
+                          },
+                          {
+                            featureType: "water",
+                            elementType: "labels.text.stroke",
+                            stylers: [{ color: "#17263c" }],
+                          },
+                            ],
+                      });
+                    }
+                else{
+                    map.setOptions({
+                        styles: [
+                            {
+                              featureType: "poi.business",
+                              stylers: [{ visibility: "off" }],
+                            },
+                            {
+                              featureType: "transit",
+                              elementType: "labels.icon",
+                              stylers: [{ visibility: "off" }],
+                            },
+                        ],
+                    });
+                }
+            });
                 
                 var myLatLng;
                 directionsDisplay.setMap(map);
@@ -331,6 +441,10 @@
                         })
                     i++;
                     })
+                    var cluster = new MarkerClusterer(map, markers, {
+                        imagePath:
+                          "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
+                    });
 
                     function calculateAndDisplayRoute(directionsService, directionsDisplay, Destination_Lat, Destination_lng){
                         const selectedMode = document.getElementById("mode").value;
@@ -420,9 +534,6 @@
                 console.log(data);
 
             var StationName = data[0].name;
-            var MaxBikes = 0;
-            var count = 0;
-            var iterationCount = 0;
                 
             var options = {
                 animation: {
@@ -453,22 +564,8 @@
 
             // store week days in an array to represent them on x-axis as they are unordered in the json data
             var WeeklyDays = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-            var AvgBikes_Week = [];
 
-                // loop the above array and sum all the values and take the average and store the result in a array
-                for(var i=0; i<WeeklyDays.length; i++){
-                    data.forEach(obj => {
-                            if(obj.Week_Day_No == WeeklyDays[i]){
-                                MaxBikes = obj.Avg_bike_stands;
-                                count = count + obj.Avg_bikes_free;
-                                iterationCount = iterationCount + 1;
-                            }
-                    })
-                    AvgBikes_Week.push(Math.floor(count/iterationCount));
-                    console.log("The total count for ",WeeklyDays[i]," is ",Math.floor(count/iterationCount));
-                    count = 0;
-                    iterationCount = 0;
-                }
+                
                 var chart = new google.visualization.LineChart(document.getElementById('weeklyChart'));
                 var chart_data = new google.visualization.DataTable();
 
@@ -478,7 +575,13 @@
 
                 // loop through all the days in a week and display the avg
                 for(var i=0; i<WeeklyDays.length; i++){
-                    chart_data.addRow([WeeklyDays[i].substr(0, 3), AvgBikes_Week[i]]);
+                    for(var j=0; j<data.length; j++){
+                     
+                        if(WeeklyDays[i] == data[j]['Week_Day_No']){
+                            
+                            chart_data.addRow([WeeklyDays[i].substr(0, 3), data[j]['Avg_bikes_free']]);
+                        }
+                    }
                 }
                 chart.draw(chart_data, options);
             });
