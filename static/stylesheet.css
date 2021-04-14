@@ -9,6 +9,7 @@
         height: 600px;
     }
 }
+
 @media only screen and (max-width: 1000px) {
     .col {
         width: 100%;
@@ -280,7 +281,7 @@ input:checked + .slider:before
     position: absolute;
     z-index: 5;
     left: 30%;
-    top: 0;
+    top: 9px;
     background-color: #fff;
     padding: 5px;
     border: 1px solid #999;
@@ -298,7 +299,7 @@ input:checked + .slider:before
     position: absolute;
     z-index: 5;
     left: 60%;
-    top: 0;
+    top: 10px;
     background-color: #fff;
     padding: 5px;
     border: 1px solid #999;
