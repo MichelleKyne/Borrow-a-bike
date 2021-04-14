@@ -14,33 +14,26 @@ app = Flask(__name__)
     
 @app.route("/")
 def index():
-    f = open('weatherkey.txt')
-    line = f.readlines()
-    converted_list = []
+    r = requests.get("http://api.weatherapi.com/v1/forecast.json?key=d0c63bd44623473da7394707212502&q=Dublin&days=1&aqi=no&alerts=no")
+    data = json.loads(r.text)
+    
+    now = datetime.datetime.now()
+    hour = int(now.strftime("%H"))
+    
+    weather = data['forecast']['forecastday'][0]['hour'][hour]
 
-    for element in line:
-        converted_list.append(element.strip())
+    hum = weather['humidity']
+    cloud = weather['cloud']
+    vis = weather['vis_km']
+    uv = weather['uv']
+    prec = weather['precip_mm']
+    temp = weather['temp_c']
+    ws = weather['wind_kph']
+    gust = weather['gust_kph']
+    feel = weather['feelslike_c']
+    icon = weather['condition']['icon']
 
-    # initalising variables
-    host = converted_list[1]
-    db_name = converted_list[2]
-    user_name = converted_list[3]
-    password = converted_list[4]
-
-    connectionObject = pymysql.connect(host=host, user=user_name, passwd=password, db=db_name, port=3306)
-    cursorObject = connectionObject.cursor()
-    sqlQuery = "SELECT *  FROM dubBikes.Weather WHERE id = (SELECT MAX(id) FROM dubBikes.Weather)"
-    cursorObject.execute(sqlQuery)
-    posts = cursorObject.fetchall()
-    for row in posts:
-        cloud = row[1]
-        condition_icon = row[2]
-        condition_text = row[3]
-        precip_mm = row[7]
-        temp_c = row[8]
-        wind_kph = row[9]
-
-    return render_template("index.html", posts=posts)
+    return render_template("index.html", post=weather)
 
 @app.route("/stations")
 @lru_cache()
@@ -133,6 +126,11 @@ def predict(station_id,hour):
     data = json.loads(r.text)
     
     weather = data['forecast']['forecastday'][0]['hour'][hour]
+
+    hum = weather['humidity']
+    cloud = weather['cloud']
+    vis = weather['vis_km']
+    uv = weather['uv']
     prec = weather['precip_mm']
     temp = weather['temp_c']
     ws = weather['wind_kph']
@@ -146,13 +144,25 @@ def predict(station_id,hour):
     dbfile.close()
     
     day = int(datetime.datetime.today().strftime('%w'))
-    p = db.predict([[day,hour,prec,temp,ws,gust,feel]]) # get a prediction
+    p = db.predict([[day,hour,hum,cloud,vis,uv,prec,temp,ws,gust,feel]]) # get a prediction
     freeBikes = str(p[0][0])
     
     json_data = []
     json_data.append([prec,temp,ws,gust,feel,freeBikes])
     data = json_data[0]
     return json.dumps(data)
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route("/subscribe")
+def subscribe():
+    return render_template("subscribe.html")
+
+@app.route("/terms")
+def terms():
+    return render_template("terms.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
