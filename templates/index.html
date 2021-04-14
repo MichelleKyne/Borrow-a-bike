@@ -13,7 +13,7 @@
                         <p><i>Please select a station and time</i></p>
                         <select id="stations" name="stations" autocomplete="off"></select>
                         <select id="hour" name="hour"></select>
-                        <input id="predict" type="button" value="Select">
+                        <input id="predict" type="button" value="Predict availability">
                     </div>
                     <div id="filters">
                         <div id="filter1">
@@ -35,9 +35,10 @@
                     </div>
 
                     <table id="results">
-                        <tr><td><i><b>Note: Select station to get the results below.</b></i></td></tr>
-                        <tr id="result"><td><i>Expected no. bikes: </i></td></tr>
-                        <tr id="nearest"><td><i>Nearest station: </i></td></tr>
+                        <tr><td><i><b>Note: Select station, time to get the results below!!</b></i></td></tr>
+                        <tr id="result"><td><i><b>Expected no. bikes: </b></i></td></tr>
+                        <tr><td><i><b>Note: Click current location to get the station name!!</b></i></td></tr>
+                        <tr id="nearest"><td><i><b>Nearest station: </b></i></td></tr>
                     </table>
                 </div>
                 
@@ -164,6 +165,8 @@
                     zoom: 13.5,
                 });
                 
+                var myLatLng;
+                var CurrentLocationStatus = "False";
                 document.getElementById("Night-mode").addEventListener("click", () => {
                 if(document.getElementById("slideNightMode").checked == true)
                     {
@@ -267,7 +270,7 @@
                 }
             });
                 
-                var myLatLng;
+                
                 directionsDisplay.setMap(map);
                 var NearestStationName;
                 var markers = [];
@@ -299,7 +302,7 @@
                         if(duplicate_marker){
                             duplicate_marker = false;
                         }
-                  
+                        
                         const pos = {
                             lat: 53.3027454557,
                             lng: -6.21700913196,
@@ -320,6 +323,7 @@
                         duplicate_marker = marker;
                         map.setCenter(pos);
                         find_closest_marker(myLatLng, static);
+                        CurrentLocationStatus = "True";
                     });
                     
                     function rad(x) {return x*Math.PI/180;}
@@ -365,7 +369,7 @@
                                 markers[i].setIcon(icon);
                             }
                         }
-                        return NearestStationName;
+                        document.getElementById("nearest").innerHTML = "<i><b>Nearst station : </b></i>"+NearestStationName;
                     }
                 
                 fetch("/dynamic").then(response => {
@@ -432,23 +436,25 @@
                     });
 
                     function calculateAndDisplayRoute(directionsService, directionsDisplay, Destination_Lat, Destination_lng){
-                        const selectedMode = document.getElementById("mode").value;
-                        let request = {
-                            origin: myLatLng,
-                            destination: {
-                                lat: Destination_Lat,
-                                lng: Destination_lng
-                            },
-                            travelMode: google.maps.TravelMode[selectedMode]
-                        };
-
-                        directionsService.route(request, function(response, status) {
-                            if(status === 'OK') {
-                                directionsDisplay.setDirections(response);
-                            }else{
-                                window.alert('Direction request failed due to '+ status);
-                            }
-                        });
+                        if(CurrentLocationStatus == "True"){
+                            const selectedMode = document.getElementById("mode").value;
+                            let request = {
+                                origin: myLatLng,
+                                destination: {
+                                    lat: Destination_Lat,
+                                    lng: Destination_lng
+                                },
+                                travelMode: google.maps.TravelMode[selectedMode]
+                            };
+    
+                            directionsService.route(request, function(response, status) {
+                                if(status === 'OK') {
+                                    directionsDisplay.setDirections(response);
+                                }else{
+                                    window.alert('Direction request failed due to '+ status);
+                                }
+                            });
+                        }
                     }
                     // Assign onclick handler to the Submit button.
                     document.getElementById("predict").onclick = function () {
