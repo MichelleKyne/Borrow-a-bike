@@ -299,46 +299,27 @@
                         if(duplicate_marker){
                             duplicate_marker = false;
                         }
-                        if (navigator.geolocation) {
-                            navigator.geolocation.getCurrentPosition(
-                            (position) => {
-                                const pos = {
-                                    lat: position.coords.latitude,
-                                    lng: position.coords.longitude,
-                                };
-                                myLatLng = {
-                                    lat: position.coords.latitude,
-                                    lng: position.coords.longitude,
-                                };
-                                var icon = {
-                                url: "{{url_for('static', filename='Curr_location_marker.png')}}",
-                                scaledSize: new google.maps.Size(30, 40),
-                                };
-                                const marker = new google.maps.Marker({
-                                position: { lat: position.coords.latitude, lng: position.coords.longitude},
-                                icon: icon,
-                                map:map,
-                                });
-                                duplicate_marker = marker;
-                                infoWindow.setPosition(pos);
-                                infoWindow.setContent("Location found.");
-                                infoWindow.open(map);
-                                map.setCenter(pos);
-                                var row = document.getElementById("nearest");
-                                const len = document.getElementById("nearest").cells.length; // check if there is a result already there
-                                if (len > 1) {
-                                    row.deleteCell(1);
-                                }
-                                var newCell = row.insertCell(1);
-                                newCell.innerHTML = find_closest_marker(myLatLng, static);
-                            },
-                            () => {
-                              handleLocationError(true, infoWindow, map.getCenter());
-                            }
-                          );
-                        } else {
-                            handleLocationError(false, infoWindow, map.getCenter());
-                           }
+                  
+                        const pos = {
+                            lat: 53.3027454557,
+                            lng: -6.21700913196,
+                        };
+                        myLatLng = {
+                            lat: 53.3027454557,
+                            lng: -6.21700913196,
+                        };
+                        var icon = {
+                        url: "{{url_for('static', filename='Curr_location_marker.png')}}",
+                        scaledSize: new google.maps.Size(30, 40),
+                        };
+                        const marker = new google.maps.Marker({
+                        position: { lat: 53.3027454557, lng: -6.21700913196},
+                        icon: icon,
+                        map:map,
+                        });
+                        duplicate_marker = marker;
+                        map.setCenter(pos);
+                        find_closest_marker(myLatLng, static);
                     });
                     
                     function rad(x) {return x*Math.PI/180;}
