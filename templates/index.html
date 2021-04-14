@@ -5,60 +5,61 @@
 {% endblock %}
 
 {% block main %}
-    <div class="row">        
-        <div class="col-3 container">
+    <div class="row">
+        <div class="column1">
             <div id="userInterface">
-                <div id="select">
-                    <p><i>Please select a station and time</i></p>
-                    <select id="stations" name="stations" autocomplete="off"></select>
-                    <select id="hour" name="hour"></select>
-                    <input id="predict" type="button" value="Select">
-                </div>
-                <div id="filters">
-                    <div id="filter1">
-                        <!--    label for the parking slot toggle switch-->
-                        <label style='font-family: sans-serif;'>Free parking stations:</label>
-                        <!--    declare a input type checkbox for available parking slots which acts a toggle switch using css-->
-                        <label class="toggle">
-                            <input id="slideparking" type="checkbox" display="none" onclick="slideparking_click()"><span class="slider"></span>
-                        </label>
+                <div id="panel">
+                    <div id="select">
+                        <p><i>Please select a station and time</i></p>
+                        <select id="stations" name="stations" autocomplete="off"></select>
+                        <select id="hour" name="hour"></select>
+                        <input id="predict" type="button" value="Select">
                     </div>
-                    <div id="filter2">
-                        <!--    label for the available bikes toggle switch-->
-                        <label style='font-family: sans-serif;'>Free bike stations:</label>
-                        <!--    declare another input type checkbox for available bikes which acts a toggle switch using css-->
-                        <label class="toggle">
-                            <input id="slidebikeavailable" type="checkbox" display="none" onclick="slidebikeavailable_click()"><span class="slider"></span>
-                        </label>
-                    </div> 
-                </div>
-                
-                <table id="results">
-                        <tr style="margin-left:9px;"><td><i><b>Note: Select station to get the results below.</b></i></td></tr>
+                    <div id="filters">
+                        <div id="filter1">
+                            <!--    label for the parking slot toggle switch-->
+                            <label style='font-family: sans-serif;'>Free parking stations:</label>
+                            <!--    declare a input type checkbox for available parking slots which acts a toggle switch using css-->
+                            <label class="toggle">
+                                <input id="slideparking" type="checkbox" display="none" onclick="slideparking_click()"><span class="slider"></span>
+                            </label>
+                        </div>
+                        <div id="filter2">
+                            <!--    label for the available bikes toggle switch-->
+                            <label style='font-family: sans-serif;'>Free bike stations:</label>
+                            <!--    declare another input type checkbox for available bikes which acts a toggle switch using css-->
+                            <label class="toggle">
+                                <input id="slidebikeavailable" type="checkbox" display="none" onclick="slidebikeavailable_click()"><span class="slider"></span>
+                            </label>
+                        </div> 
+                    </div>
+
+                    <table id="results">
+                        <tr><td><i><b>Note: Select station to get the results below.</b></i></td></tr>
                         <tr id="result"><td><i>Expected no. bikes: </i></td></tr>
                         <tr id="nearest"><td><i>Nearest station: </i></td></tr>
-                </table>
+                    </table>
+                </div>
                 
                 <div id="weather">
-                    {% for post in posts %}
-                    <div id="Weather_Image" style='float: left;'>
-                        <img src={{post[2]}} alt='weather icon'>
+                    {% set weather = post %}
+                    <div style="display: block;">
+                        <img src={{ weather["condition"]["icon"] }} alt='weather icon'>
                     </div>
-                    <div id="Weather_temp" style='float: left;'>
-                        <p style="font-size: 40px;">{{post[8]}}&#176C</p>
-                        <p style="font-size: 20px;">{{post[3]}}</p>
+                    <div style='float: left; padding-left: 20px;'>
+                        <p style="font-size: 40px;">{{ weather["temp_c"] }}&#176C</p>
+                        <p style="font-size: 20px;">{{ weather["condition"]["text"] }}</p>
                     </div>
-                    <div id="Weather_details" style='float: left;'>
-                        <p>Cloud cover: {{post[1]}}%</p>
-                        <p>Precipitation: {{post[7]}}</p>
-                        <p>Wind speed: {{post[9]}}</p>
+                    <div style='float: left; padding-left: 20px;'>
+                        <p>Cloud cover: {{ weather["cloud"] }}%</p>
+                        <p>Precipitation: {{ weather["precip_mm"] }} mm</p>
+                        <p>Wind speed: {{ weather["wind_kph"] }} kph</p>
                     </div>
-                    {% endfor %}
-                </div>        
+                </div> 
             </div>
         </div>
         
-        <div class="col-9 container">
+        <div id="mapUI" class="column2">
             <div id="floating-panel">
                 <b>Mode of Travel: </b>
                 <select id="mode">
@@ -79,10 +80,9 @@
     </div>
 
     <div id="charts">
-        <div id="weeklyChart" class="col-6" style="float: left;"></div>
-        <div id="hourlyChart" class="col-6" style="float: left;"></div>
+        <div id="weeklyChart" class="col"></div>
+        <div id="hourlyChart" class="col"></div>
     </div>
-    
     
     <footer><p>Copyright &copy; 2009-2021 Dublin Bikes</p></footer>
 
@@ -92,7 +92,7 @@
             const splash = document.createElement("div");
             splash.className = "overlay";
             splash.id = "splash";
-            splash.innerHTML = "<img class='Logo' src='{{ url_for('static', filename='splash.png') }}' alt='Logo'>";
+            splash.innerHTML = "<img class='Logo' src='{{ url_for('static', filename='splash.jpeg') }}' alt='Logo'>";
             document.getElementsByTagName("body")[0].appendChild(splash);
             return new Promise(resolve => {
                 setTimeout(() => {
@@ -325,6 +325,10 @@
                                 infoWindow.open(map);
                                 map.setCenter(pos);
                                 var row = document.getElementById("nearest");
+                                const len = document.getElementById("nearest").cells.length; // check if there is a result already there
+                                if (len > 1) {
+                                    row.deleteCell(1);
+                                }
                                 var newCell = row.insertCell(1);
                                 newCell.innerHTML = find_closest_marker(myLatLng, static);
                             },
@@ -643,6 +647,10 @@
             }).then(data => {
                 console.log(data);
                 var row = document.getElementById("result");
+                const len = document.getElementById("result").cells.length; // check if there is a result already there
+                if (len > 1) {
+                    row.deleteCell(1);
+                }
                 var newCell = row.insertCell(1);
                 newCell.innerHTML = data[5];
         })}
