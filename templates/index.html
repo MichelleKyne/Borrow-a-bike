@@ -39,7 +39,7 @@
                         <tr id="result"><td style="width: 30px;"><i><b>Expected no. bikes: </b></i></td></tr>
                         <tr><td colspan="2"><i><b>Note: Click current location to get the station name!!</b></i></td></tr>
                         <tr id="nearest"><td style="width: 30px;"><i><b>Nearest station: </b></i></td></tr>
-                        <tr id="distance"><td><i><b>Distance in KM from current location:</b></i></td></tr>
+                        <tr id="distance"><td><i><b>Travel Distance (km):</b></i></td></tr>
                     </table>
                 </div>
                 
@@ -270,8 +270,7 @@
                     });
                 }
             });
-                
-                
+                   
                 directionsDisplay.setMap(map);
                 var NearestStationName;
                 var markers = [];
@@ -473,7 +472,15 @@
                                     lng: Destination_lng
                                 })
                             );
-                            document.getElementById("distance").innerHTML = "<i><b>Distance in KM from current location: </b></i>"+((distanceInMeters* 0.001).toFixed(2))+" Km";
+//                            document.getElementById("distance").innerHTML = "<i><b>Distance in KM from current location: </b></i>"+((distanceInMeters* 0.001).toFixed(2))+" Km";
+                            var row = document.getElementById("distance");
+                            const len = document.getElementById("distance").cells.length; // check if there is a result already there
+                            if (len > 1) {
+                                row.deleteCell(1);
+                            }
+                            var newCell = row.insertCell(1);
+                            newCell.width = "50px";
+                            newCell.innerHTML = ((distanceInMeters* 0.001).toFixed(2));
                             
                             directionsService.route(request, function(response, status) {
                                 if(status === 'OK') {
