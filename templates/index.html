@@ -35,10 +35,10 @@
                     </div>
 
                     <table id="results">
-                        <tr><td><i><b>Note: Select station, time to get the results below!!</b></i></td></tr>
-                        <tr id="result"><td><i><b>Expected no. bikes: </b></i></td></tr>
-                        <tr><td><i><b>Note: Click current location to get the station name!!</b></i></td></tr>
-                        <tr id="nearest"><td><i><b>Nearest station: </b></i></td></tr>
+                        <tr><td colspan="2"><i><b>Note: Select station, time to get the results below!!</b></i></td></tr>
+                        <tr id="result"><td style="width: 30px;"><i><b>Expected no. bikes: </b></i></td></tr>
+                        <tr><td colspan="2"><i><b>Note: Click current location to get the station name!!</b></i></td></tr>
+                        <tr id="nearest"><td style="width: 30px;"><i><b>Nearest station: </b></i></td></tr>
                     </table>
                 </div>
                 
@@ -369,7 +369,14 @@
                                 markers[i].setIcon(icon);
                             }
                         }
-                        document.getElementById("nearest").innerHTML = "<i><b>Nearst station : </b></i>"+NearestStationName;
+                        var row = document.getElementById("nearest");
+                        const len = document.getElementById("nearest").cells.length; // check if there is a result already there
+                        if (len > 1) {
+                            row.deleteCell(1);
+                        }
+                        var newCell = row.insertCell(1);
+                        newCell.width = "50px";
+                        newCell.innerHTML = NearestStationName;
                     }
                 
                 fetch("/dynamic").then(response => {
@@ -639,7 +646,8 @@
                     row.deleteCell(1);
                 }
                 var newCell = row.insertCell(1);
-                newCell.innerHTML = data[5];
+                newCell.width = "50px";
+                newCell.innerHTML = Math.round(data[5]);
         })}
 </script>
 
