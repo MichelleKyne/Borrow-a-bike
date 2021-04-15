@@ -39,6 +39,7 @@
                         <tr id="result"><td style="width: 30px;"><i><b>Expected no. bikes: </b></i></td></tr>
                         <tr><td colspan="2"><i><b>Note: Click current location to get the station name!!</b></i></td></tr>
                         <tr id="nearest"><td style="width: 30px;"><i><b>Nearest station: </b></i></td></tr>
+                        <tr id="distance"><td><i><b>Distance in KM from current location:</b></i></td></tr>
                     </table>
                 </div>
                 
@@ -324,6 +325,14 @@
                         map.setCenter(pos);
                         find_closest_marker(myLatLng, static);
                         CurrentLocationStatus = "True";
+                         var infowindow = new google.maps.InfoWindow({
+                                content: '<h3>Mock current location</h3>',
+                        });
+                        
+                       infowindow.open(map,marker);
+                        google.maps.event.addListener(marker,"click",function() {
+                            infowindow.open(map,marker);
+                        })
                     });
                     
                     function rad(x) {return x*Math.PI/180;}
@@ -453,7 +462,19 @@
                                 },
                                 travelMode: google.maps.TravelMode[selectedMode]
                             };
-    
+                            
+                            var distanceInMeters = google.maps.geometry.spherical.computeDistanceBetween(
+                                new google.maps.LatLng({
+                                    lat: myLatLng.lat,
+                                    lng: myLatLng.lng
+                                }),
+                                new google.maps.LatLng({
+                                    lat: Destination_Lat,
+                                    lng: Destination_lng
+                                })
+                            );
+                            document.getElementById("distance").innerHTML = "<i><b>Distance in KM from current location: </b></i>"+((distanceInMeters* 0.001).toFixed(2))+" Km";
+                            
                             directionsService.route(request, function(response, status) {
                                 if(status === 'OK') {
                                     directionsDisplay.setDirections(response);
