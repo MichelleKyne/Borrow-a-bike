@@ -438,9 +438,12 @@
                         google.maps.event.addListener(marker,"click",function() {
                             WeeklyChart(station.num);
                             HourlyChart(station.num);
+                            // need to use localStorage here to ensure maker location updates and persists
+                            localStorage['lat'] = marker.getPosition().lat();
+                            localStorage['lng'] = marker.getPosition().lng();
                             calculateAndDisplayRoute(directionsService, directionsDisplay, marker.getPosition().lat(), marker.getPosition().lng());
                             document.getElementById("mode").addEventListener("change", () => {
-                                calculateAndDisplayRoute(directionsService, directionsDisplay, marker.getPosition().lat(), marker.getPosition().lng());
+                                calculateAndDisplayRoute(directionsService, directionsDisplay, Number(localStorage.getItem('lat')), Number(localStorage.getItem('lng')));
                             });
                         })
                     i++;
