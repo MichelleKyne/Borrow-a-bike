@@ -15,7 +15,7 @@ Developers: Michelle Kyne, Maria Leech, Poorna Sri Praneeth Swamy Korukonda
 Target User
 The target user is any Dublin city resident/visitor over the age of 14. The aim is to enhance the experience of existing users and also to enable new users to access the service easily. In particular, users unfamiliar with Dublin city will benefit from the routing feature, which detects the location of the user and maps out a route to the nearest station.
 
-Features
+Features  
 A map that has both normal and night modes to improve the experience of the user depending on when they are accessing the application.
 Station markers that display current bike and parking availability levels.
 Toggles that filter map markers according to available bikes/parking slots.
