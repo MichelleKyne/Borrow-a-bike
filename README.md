@@ -8,11 +8,11 @@ A model predicting occupancy levels based on weather and time of day.
 A splash screen.
 Average occupancy line charts based on time and day.
 
-Team
-Product Owner: Zheng Ju
-Developers: Michelle Kyne, Maria Leech, Poorna Sri Praneeth Swamy Korukonda
+Team  
+Product Owner: Zheng Ju  
+Developers: Michelle Kyne, Maria Leech, Poorna Sri Praneeth Swamy Korukonda  
 
-Target User
+Target User  
 The target user is any Dublin city resident/visitor over the age of 14. The aim is to enhance the experience of existing users and also to enable new users to access the service easily. In particular, users unfamiliar with Dublin city will benefit from the routing feature, which detects the location of the user and maps out a route to the nearest station.
 
 Features  
